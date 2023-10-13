@@ -8,6 +8,7 @@ import torch
 
 DEVICE = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 TRAINING_TASK = "training"
+TESTING_TASK = "testing"
 DEFAULT_TRAINING_THRESHOLD = -1000000000000
 
 def get_arguments() -> Dict[str, Any]:
@@ -47,6 +48,14 @@ def get_arguments() -> Dict[str, Any]:
     # Preprocessor
     arg_parser.add_argument('--preprocessor', help='Preprocessor configuration string.', type=str,
                             default='')
+
+    # TestCase String
+    arg_parser.add_argument('--test_case', help='Preprocessor configuration string.', type=str,
+                            default='simple_state_reacher;10:0=4.0649266')
+
+    # Configurator
+    arg_parser.add_argument('--configurator', help='Configurator configuration string (CONFIGURATOR_NAME;STATE_CONFIGURATION;PARAMETER_CONFIGURATION).', type=str,
+                            default='random_state_configurator;0:float:-4.7:4.7')
 
 
     # Agents

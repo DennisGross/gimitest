@@ -57,6 +57,14 @@ class Project():
                 del saved_command_line_arguments['project_name']
             except:
                 pass
+            try:
+                del saved_command_line_arguments['test_case']
+            except:
+                pass
+            try:
+                del saved_command_line_arguments['configurator']
+            except:
+                pass
             if self.command_line_arguments['preprocessor'] != '':
                 # Only delete it if it is not set by the command line (in this case take new one)
                 # If "None", later during building none will be created

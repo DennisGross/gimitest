@@ -57,18 +57,21 @@ class GimiGym():
         all_attributes = dir(deepest_env)
         return None, None
 
-    def reset(self, state=None):
+    def reset(self):
         """
         Resets the environment.
         """
-        if state is None:
-            state = self.env.reset()
-        else:
-            self.state_manipulator(state)
-            state = self.env.reset()
+        state = self.env.reset()
         state = state[0]
+        # Ist not None:
+        if self.configurator is not None:
+            #print("Old", state)
+            state = self.configurator.generate_state(state)
+            #print("Modified", state)
+            self.state_manipulator(state)
         self.steps = 0
         return state
+
 
     def step(self, action):
         """
@@ -85,3 +88,14 @@ class GimiGym():
         Renders the environment.
         """
         self.env.render()
+
+    def get_state_dict(self):
+        # Observation space
+        # Return {"feature1": {"type": "int", "low": 0, "high": 10}, "feature1": {"type": "float", "low": 0.0, "high": 1.0}, ...}
+        state_dict = {}
+        for i in range(len(self.observation_space.low)):
+            state_dict[int(i)] = {"type": "float", "low": self.observation_space.low[i], "high": self.observation_space.high[i]}
+        return state_dict
+
+    def set_configurator(self, configurator):
+        self.configurator = configurator

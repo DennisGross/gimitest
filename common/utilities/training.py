@@ -10,21 +10,22 @@ import gc
 
 
 
-def execute(project, env, deploy):
+def execute(project, env, deploy, num_episodes, printing=True):
     all_episode_rewards = deque(maxlen=project.command_line_arguments['sliding_window_size'])
     all_property_results = deque(maxlen=project.command_line_arguments['sliding_window_size'])
     best_reward_of_sliding_window = math.inf * -1
     satisfied = False
-
     project.agent.load_env(env)
     try:
-        for episode in range(project.command_line_arguments['num_episodes']):
+        for episode in range(num_episodes):
             state = env.reset()
             done = False
             episode_reward = 0
+            last_episode_trajectory = []
             while done == False:
                 action = project.agent.select_action(state, deploy)
                 next_state, reward, done, info = env.step(action)
+                last_episode_trajectory.append((state, action, reward, next_state, done))
                 if deploy==False:
                     project.agent.store_experience(state, action, reward, next_state, done)
                     project.agent.step_learn()
@@ -45,10 +46,11 @@ def execute(project, env, deploy):
                     project.save(episode, best_reward_of_sliding_window)
 
                 if (best_reward_of_sliding_window >= project.command_line_arguments['training_threshold']) and DEFAULT_TRAINING_THRESHOLD != project.command_line_arguments['training_threshold']:
-                    print("Property satisfied!")
+                    if printing:
+                        print("Property satisfied!")
                     satisfied = True
-
-            print(episode, "Episode\tReward", episode_reward, '\tAverage Reward', reward_of_sliding_window, '\tBest Average Reward', best_reward_of_sliding_window)
+            if printing:
+                print(episode, "Episode\tReward", episode_reward, '\tAverage Reward', reward_of_sliding_window, '\tBest Average Reward', best_reward_of_sliding_window)
             gc.collect()
             if satisfied:
                 break
@@ -58,4 +60,4 @@ def execute(project, env, deploy):
     finally:
         torch.cuda.empty_cache()
 
-    return best_reward_of_sliding_window
+    return best_reward_of_sliding_window, last_episode_trajectory
