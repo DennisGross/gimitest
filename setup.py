@@ -5,7 +5,7 @@ with open("requirements.txt", "r") as f:
     requirements = f.read().splitlines()
 
 setup(
-    name="my_package",
+    name="gimitest",
     version="0.1",
     packages=find_packages(),
     install_requires=requirements,
