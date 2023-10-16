@@ -9,16 +9,17 @@ from configurator import Configurator
 # Init Gym
 env = gym.make('CartPole-v1')
 
-# Test Cases
+# List of Test Cases
 test_cases = [TestCase()]
+# Configurator
 configurator = Configurator({"state_variable_name": "state"})
-# Extend the step function using the decorator
+# Decorate the environment by extending its reset and step function
 env = GymDecorator.decorate_gym(env, test_cases, configurator)
 
-# Test the extended environment
+# Run the environment
 observation, info = env.reset()
 for _ in range(1000):
     action = env.action_space.sample()
     observation, reward, done, truncated, info = env.step(action)
-    if done:
+    if done or truncated:
         observation, info = env.reset()
