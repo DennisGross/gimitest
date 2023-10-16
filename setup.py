@@ -6,7 +6,7 @@ with open("requirements.txt", "r") as f:
 
 setup(
     name="gimitest",
-    version="0.1",
+    version="1.0",
     packages=find_packages(),
     install_requires=requirements,
 )
