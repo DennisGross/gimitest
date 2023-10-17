@@ -14,7 +14,7 @@ Second, create a list of test cases using the `TestCase` class to define the con
 Third, utilize the `Configurator` class to set initial conditions, such as state variables.
 Fourth, the state variable needs to be specified via the parameters and needs to be available as attribute in the environment. In our case, the state is stored in the state variable `state`.
 Fifth, the GymDecorator class is employed to extend the `reset()` and `step()` methods of the Gym environment, allowing for testing at specific time intervals and episode terminations.
-Then, the decorated environment can then be executed to evaluate the RL agent's performance.
+Then, the decorated environment can then be executed to evaluate the RL agent's performance during training or testing.
 ```
 import gymnasium as gym
 from gym_decorator import GymDecorator
@@ -38,3 +38,44 @@ for _ in range(1000):
     if done or truncated:
         state, info = env.reset()
 ```
+
+## Architecture
+Decorator design pattern is used to modify the functionality of an object at runtime. At the same time other instances of the same class will not be affected by this, so individual object gets the modified behavior.
+
+We use the decorator design pattern to extend the `reset()` and `step()` methods of the Gym environment, allowing for testing at specific time intervals and episode terminations.
+
+In the case of `reset()`, the decorator checks the current state of the environment and compares it to the test cases. It then executes the basic functionality of the `reset()` method.
+After that, it executes the configurator to either modify the initial state or modify any other parameter (such as the gravity of the environment) and returns the modified state with the corresponding information.
+The TestCases can inform the configurator via messages about their execution and guide the configuration.
+The following code snippet shows the implementation of the `reset()` decorator.
+It first executes the test cases and stores their messages.
+Then, it calls the original `reset()` function and stores the next state.
+Finally, it applies the configurator if set and returns the modified state with the corresponding information.
+```
+def wrapper(*args, **kwargs):
+    test_case_messages = []
+    # Handle test cases if any
+    if test_cases is not None:
+    for test_case in test_cases:
+        test_case.episode_execute()
+        test_case_messages.append(test_case.get_message())
+        test_case.episode_store()
+
+    # Call the original reset function
+    next_state, info = original_reset_function(*args, **kwargs)
+    env.tmp_storage_of_state = next_state
+
+    # Apply configurator if set
+    if configurator is not None:
+        env.tmp_storage_of_state = configurator.configure(env, test_case_messages)
+    return env.tmp_storage_of_state, info
+```
+
+In the case of `step()`, the decorator checks the current state of the environment and compares it to the test cases. It then executes the basic functionality of the `step()` method.
+
+
+### TestCases
+
+
+
+### Configurators
