@@ -1,5 +1,5 @@
 # Gimitest
-The _Gimitest framework_ enhances the [Farama Gymnasium](https://gymnasium.farama.org/index.html) by modifying its `reset()` and `step()` methods, thereby simplifying the testing process of Reinforcement Learning (RL) agents at specific time steps and episode terminations.
+The _Gimitest framework_ enhances the [Farama Gymnasium](https://gymnasium.farama.org/index.html) by modifying its `reset()` and `step()` methods, thereby simplifying the testing process of Reinforcement Learning (RL) agents at specific time steps and episode terminations, whether in training or testing phases.
 It offers predefined `TestCases` along with the capability to develop custom `TestCases`, thereby providing flexibility in the testing regime. The availability of both standard and customizable `Configurators` further enables the sampling of RL agent behavior under varied initial states and environment parameters.
 
 ## Setup
@@ -14,7 +14,7 @@ Second, create a list of test cases using the `TestCase` class to define the con
 Third, utilize the `Configurator` class to set initial conditions, such as state variables.
 Fourth, the state variable needs to be specified via the parameters and needs to be available as attribute in the environment. In our case, the state is stored in the state variable `state`.
 Fifth, the GymDecorator class is employed to extend the `reset()` and `step()` methods of the Gym environment, allowing for testing at specific time intervals and episode terminations.
-Then, the decorated environment can then be executed to evaluate the RL agent's performance during training or testing.
+Then, the decorated environment can then be executed to evaluate the RL agent's performance.
 ```
 import gymnasium as gym
 from gym_decorator import GymDecorator
@@ -74,8 +74,14 @@ def wrapper(*args, **kwargs):
 In the case of `step()`, the decorator checks the current state of the environment and compares it to the test cases. It then executes the basic functionality of the `step()` method.
 
 
-### TestCases
+### TestCase-Class
+The `TestCase` class serves as a base class for creating test cases specifically tailored for gym environments. It contains a single attribute, parameters, which is a dictionary meant for holding custom parameters for individual test cases. The class has various methods that can be overridden to provide custom behavior during testing. The `__init__`-method initializes the class instance with these custom parameters. The `step_execute`-method is designed to be called at each step in the gym environment, taking various arguments like current state, action arguments, and original outcomes like next state and reward. It returns potentially modified versions of these outcomes. The `step_store` and `step_load`-methods are placeholders for storing and loading data relevant to each step, respectively. Similarly, `episode_execute`, `episode_store`, and episode_load methods serve as placeholders for operations at the start and end of each episode. Lastly, the `get_message method` is designed to return messages or information as a dictionary to inform the configurator about the execution of the test case.
 
 
 
 ### Configurators
+The `Configurator` class is a foundational class intended to configure gym environments.
+It has a single attribute, parameters, a dictionary expected to contain custom configuration parameters including a key for "state_variable_name" which indicates the name of the state variable in the gym environment. The `__init__`-method initializes the object with given parameters, expected to contain a key for "state_variable_name".
+The `modify_state`-method alters the state of the gym environment based on the parameters.
+the `get_state`-method etrieves the current state of the gym environment.
+The `configure`-method is intended for overriding to provide custom environment configuration logic.
