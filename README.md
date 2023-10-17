@@ -1,13 +1,13 @@
 # Gimitest
 The _Gimitest framework_ enhances the [Farama Gymnasium](https://gymnasium.farama.org/index.html) by modifying its `reset(...)` and `step(...)` methods, thereby simplifying the testing process of Reinforcement Learning (RL) agents at specific time steps and episode terminations, whether in training or testing phases.
-It offers predefined `TestCases` along with the capability to develop custom `TestCases`, thereby providing flexibility in the testing regime. The availability of both standard and customizable `Configurators` further enables the sampling of RL agent behavior under varied initial states and environment parameters.
+It offers predefined `TestCase` classes along with the capability to develop custom ones, thereby providing flexibility in the testing regime.
+The availability of both standard and customizable `Configurator` classes further enables the sampling of RL agent behavior under varied initial states and environment parameters.
 
-## Setup
+
+## 🚀 Getting Started
 Install package via:
 `pip install git+https://github.com/DennisGross/gimitest.git`
 
-
-## Getting Started
 The example code snippet demonstrates how to set up a basic environment, using the 'CartPole-v1' environment as an example.
 First Initialize the Gym Environment: Utilize the gym.make() function from the Gymnasium package to create your environment.
 Second, create a list of test cases using the `TestCase` class to define the conditions under which your RL agent will be evaluated.
@@ -31,15 +31,15 @@ configurator = Configurator({"state_variable_name": "state"})
 env = GymDecorator.decorate_gym(env, test_cases, configurator)
 
 # Run the environment
-state, info = env.reset()
+state, info = env.reset()   # Tests and configuration are executed here
 for _ in range(1000):
     action = env.action_space.sample()
-    state, reward, done, truncated, info = env.step(action)
+    state, reward, done, truncated, info = env.step(action) # Tests are executed here
     if done or truncated:
-        state, info = env.reset()
+        state, info = env.reset() # Tests and configuration is executed here
 ```
 
-## Architecture
+## 👩🏼‍💻 Architecture
 Decorator design pattern is used to modify the functionality of an object at runtime. At the same time other instances of the same class will not be affected by this, so individual object gets the modified behavior.
 
 We use the decorator design pattern to extend the `reset(...)` and `step(...)` methods of the Gym environment, allowing for testing at specific time intervals and episode terminations.
@@ -72,11 +72,32 @@ def wrapper(*args, **kwargs):
 ```
 
 In the case of `step(...)`, the decorator checks the current state of the environment and compares it to the test cases. It then executes the basic functionality of the `step(...)` method.
+The last element in the test_cases list can be used to modify the observed state for the RL agent. This can be used to test the effect of sensor noise on the RL agent's performance.
 
-### TestCase-Class
-The `TestCase` class serves as a base class for creating test cases specifically tailored for gym environments. It contains a single attribute, parameters, which is a dictionary meant for holding custom parameters for individual test cases. The class has various methods that can be overridden to provide custom behavior during testing. The `__init__(...)` method initializes the class instance with these custom parameters. The `step_execute(...)` method is designed to be called at each step in the gym environment, taking various arguments like current state, action arguments, and original outcomes like next state and reward. It returns potentially modified versions of these outcomes. The `step_store(...)` and `step_load(...)` methods are placeholders for storing and loading data relevant to each step, respectively. Similarly, `episode_execute(...)`, `episode_store(...)`, and episode_load methods serve as placeholders for operations at the start and end of each episode. Lastly, the `get_message method(...)` is designed to return messages or information as a dictionary to inform the configurator about the execution of the test case.
+```
+def wrapper(*action_args, **kwargs):
+    # Call the original step function
+    original_next_state, original_reward, original_done, original_truncated, original_info = 
+    original_step_function(*action_args, **kwargs)
+            
+    # Handle test cases if any
+    if test_cases is None:
+        env.tmp_storage_of_state = original_next_state
+        return original_next_state, original_reward, original_done, original_truncated, original_info
+    else:
+        for test_case in test_cases:
+            tmp_next_state, tmp_reward, tmp_done, tmp_truncated, tmp_info = test_case.step_execute(env, 
+            env.tmp_storage_of_state, action_args, original_reward, original_done, original_truncated,
+            original_info)
+            test_case.step_store()
+        env.tmp_storage_of_state = original_next_state
+        return tmp_next_state, tmp_reward, tmp_done, tmp_truncated, tmp_info
+```
 
-### Configurator-Class
+### 👮🏼‍♂️ TestCase Class
+The `TestCase` class serves as a base class for creating test cases specifically tailored for gym environments. It contains a single attribute, parameters, which is a dictionary meant for holding custom parameters for individual test cases. The class has various methods that can be overridden to provide custom behavior during testing. The `__init__(...)` method initializes the class instance with these custom parameters. The `step_execute(...)` method is designed to be called at each step in the gym environment, taking various arguments like current state, action arguments, and original outcomes like next state and reward. It returns potentially modified versions of these outcomes. The `step_store(...)` and `step_load(...)` methods are placeholders for storing and loading data relevant to each step, respectively. Similarly, `episode_execute(...)`, `episode_store(...)`, and `episode_load(...)` methods serve as placeholders for operations at the start and end of each episode. Lastly, the `get_message(...)` method is designed to return messages or information as a dictionary to inform the configurator about the execution of the test case.
+
+### 👨🏼‍🔧 Configurator Class
 The `Configurator` class is a foundational class intended to configure gym environments.
 It has a single attribute, parameters, a dictionary expected to contain custom configuration parameters including a key for "state_variable_name" which indicates the name of the state variable in the gym environment. The `__init__(...)` method initializes the object with given parameters, expected to contain a key for "state_variable_name".
 The `modify_state(...)` method alters the state of the gym environment based on the parameters.
