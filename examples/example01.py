@@ -16,9 +16,9 @@ configurator = Configurator({"state_variable_name": "state"})
 env = GymDecorator.decorate_gym(env, test_cases, configurator)
 
 # Run the environment
-observation, info = env.reset()
+state, info = env.reset()
 for _ in range(1000):
     action = env.action_space.sample()
-    observation, reward, done, truncated, info = env.step(action)
+    state, reward, done, truncated, info = env.step(action)
     if done or truncated:
-        observation, info = env.reset()
+        state, info = env.reset()
