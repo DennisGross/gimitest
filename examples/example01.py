@@ -2,13 +2,12 @@ import gymnasium as gym
 import sys
 sys.path.append('../gimitest')
 from gym_decorator import GymDecorator
-from test_case import TestCase
-from configurator import Configurator
+from test_cases.test_case import TestCase
+from configurators.configurator import Configurator
 
 
 # Init Gym
 env = gym.make('CartPole-v1')
-
 # List of Test Cases
 test_cases = [TestCase()]
 # Configurator
