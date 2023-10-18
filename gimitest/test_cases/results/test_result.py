@@ -11,6 +11,7 @@ class TestResult:
             parameters (dict): Custom parameters for the test result.
         """
         self.root_dir = root_dir
+        self.collected_reward = 0
         
     
     def create_test_folder(self):
@@ -32,11 +33,20 @@ class TestResult:
         episode_dir = self.create_episode_path(episode)
         if not os.path.exists(episode_dir):
             os.makedirs(episode_dir)
+
+        # Add collected reward
+        print("Collected reward: ", self.collected_reward)
+        print("Meta data: ", meta_data)
+        meta_data["collected_reward"] = self.collected_reward
         path = os.path.join(episode_dir, "meta.json")
         with open(path, 'w') as f:
             json.dump(meta_data, f)
-    # test_case.episode, test_case.steps, original_state,  action_args, original_reward, original_next_state, original_terminated, original_truncated, original_info, test_case.meta_data)
-    def store_episode_step(self, episode, step, state, action, reward, next_state, done, truncated, info, meta_data):
+        
+        # Reset collected reward
+        self.collected_reward = 0
+
+    
+    def store_episode_step(self, episode, step, state, action,  next_state, reward, done, truncated, info, meta_data):
         """
         Method for storing the test result.
 
@@ -57,6 +67,7 @@ class TestResult:
         path = self.create_file_path(episode, step)
         with open(path, 'wb') as f:
             pickle.dump([state, action, reward, next_state, done, truncated, info, meta_data], f)
+        self.collected_reward += reward
 
     def create_episode_path(self, episode):
         """
