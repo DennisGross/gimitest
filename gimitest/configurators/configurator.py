@@ -24,6 +24,7 @@ Example:
         def configure(self, env, test_case_messages):
             # Custom code for configuration
 """
+from queue import Queue
 
 class Configurator():
     """Configurator base class for configuring gym environments.
@@ -41,6 +42,35 @@ class Configurator():
         """
         self.parameters = parameters
 
+    def __set_breadth_first_attribute(self, root_obj, attribute_name, n_value):
+        """Sets the value of attribute attribute_name of the object using breadth-first search.
+        
+        Args:
+            root_obj (object): The root object whose attribute needs to be modified.
+            attribute_name (str): The name of the attribute to modify.
+            n_value (object): The new value to set.
+
+        Returns:
+            bool: True if the attribute was successfully modified, otherwise False.
+        """
+        
+        q = Queue()
+        q.put(root_obj)
+        
+        while not q.empty():
+            obj = q.get()
+            
+            if hasattr(obj, attribute_name):
+                setattr(obj, attribute_name, n_value)
+                return True
+            
+            for attr in dir(obj):
+                nested_attr = getattr(obj, attr)
+                if isinstance(nested_attr, object) and not isinstance(nested_attr, (str, int, float, bytes)):
+                    q.put(nested_attr)
+        
+        return False
+
     def set_attribute(self, env, attribute_name, n_value):
         """Sets the value of attribute attribute_name of the environment.
         
@@ -55,27 +85,57 @@ class Configurator():
         Raises:
             ValueError: If attribute name does not exist in the environment.
         """
-        is_attr = hasattr(env, attribute_name)
-        if is_attr:
-            setattr(env, attribute_name, n_value)
-        else:
+        
+        is_attr_set = self.__set_breadth_first_attribute(env, attribute_name, n_value)
+        
+        if not is_attr_set:
             raise AttributeError(f"Attribute {attribute_name} does not exist in environment.")
+
+    def __get_breadth_first_attribute(self, root_obj, attribute_name):
+        """Fetches the value of attribute attribute_name of the object using breadth-first search.
+        
+        Args:
+            root_obj (object): The root object whose attribute value needs to be fetched.
+            attribute_name (str): The name of the attribute to fetch.
+
+        Returns:
+            object: The value of the attribute if found, otherwise None.
+        """
+        
+        q = Queue()
+        q.put(root_obj)
+        
+        while not q.empty():
+            obj = q.get()
+            
+            if hasattr(obj, attribute_name):
+                return getattr(obj, attribute_name)
+            
+            for attr in dir(obj):
+                nested_attr = getattr(obj, attr)
+                if isinstance(nested_attr, object) and not isinstance(nested_attr, (str, int, float, bytes)):
+                    q.put(nested_attr)
+                    
+        return None  # Return None if attribute is not found
 
     def get_attribute(self, env, attribute_name):
         """Fetches the current attribute value of the environment.
         
         Args:
             env (object): The gym environment object whose state needs to be fetched.
+            attribute_name (str): The name of the attribute to fetch.
 
         Returns:
             object: The attribute value of the environment.
-
+        
         Raises:
-            ValueError: If attribute name does not exist in the environment.
+            AttributeError: If attribute name does not exist in the environment.
         """
-        is_attr = hasattr(env, attribute_name)
-        if is_attr:
-            return getattr(env, attribute_name)
+        
+        attr_value = self.__get_breadth_first_attribute(env, attribute_name)
+        
+        if attr_value is not None:
+            return attr_value
         else:
             raise AttributeError(f"Attribute {attribute_name} does not exist in environment.")
 
