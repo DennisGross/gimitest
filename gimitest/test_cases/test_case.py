@@ -31,14 +31,16 @@ class TestCase():
         parameters (dict): Custom parameters for the test case.
     """
 
-    def __init__(self, parameters={}, test_result=None):
+    def __init__(self, parameters={}):
         """Initializes the TestCase object with the given parameters.
 
         Args:
             parameters (dict): Custom parameters for the test case.
         """
         self.parameters = parameters
-        self.test_result = test_result
+        self.meta_data = {}
+        self.episode = 0
+        self.steps = 0
 
     def step_execute(self, env, original_state, action_args, original_next_state, original_reward, original_terminated, original_truncated, original_info):
         """Method to be executed during each step of the environment.
@@ -57,28 +59,8 @@ class TestCase():
             None: Placeholder for child classes to implement this method.
         """
         #print("I am the step_execute method of the TestCase class (modify me).")
-        return original_next_state, original_reward, original_terminated, original_truncated, original_info
+        return original_state, action_args, original_next_state, original_reward, original_terminated, original_truncated, original_info
 
-
-    
-
-    def step_store(self):
-        """Method for storing information after each step.
-        The storage location can be defined via the parameters.
-        Returns:
-            None: Placeholder for child classes to implement this method.
-        """
-        #print("I am the step_store method of the TestCase class  (modify me).")
-        pass
-
-    def step_load(self, path):
-        """Method for loading information of a step from a path.
-
-        Args:
-            path (str): The path to load the information from.
-        """
-        #print("I am the step_load method of the TestCase class  (modify me).")
-        pass
 
     def episode_execute(self):
         """Method to be executed at the start of each episode.
@@ -89,24 +71,6 @@ class TestCase():
         #print("I am the episode_execute method of the TestCase class (modify me).")
         pass
 
-    def episode_store(self):
-        """Method for storing information at the end of each episode.
-        The storage location can be defined via the parameters.
-        
-        Returns:
-            None: Placeholder for child classes to implement this method.
-        """
-        #print("I am the episode_store method of the TestCase class  (modify me).")
-        pass
-
-    def episode_load(self, path):
-        """Method for loading information of a episode from a path.
-
-        Args:
-            path (str): The path to load the information from.
-        """
-        #print("I am the episode_load method of the TestCase class  (modify me).")
-        pass
 
     def get_message(self):
         """Method for getting messages or information to be passed along.
@@ -116,3 +80,15 @@ class TestCase():
         """
         #print("I am the get_message method of the TestCase class (modify me).")
         return {}
+
+    def episode_increment(self):
+        """
+        Method for incrementing the episode number.
+        """
+        self.episode += 1
+
+    def step_increment(self):
+        """
+        Method for incrementing the step number.
+        """
+        self.steps += 1

@@ -11,6 +11,7 @@ class TestResult:
             parameters (dict): Custom parameters for the test result.
         """
         self.root_dir = root_dir
+        
     
     def create_test_folder(self):
         """
@@ -34,8 +35,8 @@ class TestResult:
         path = os.path.join(episode_dir, "meta.json")
         with open(path, 'w') as f:
             json.dump(meta_data, f)
-
-    def store_episode_step(self, episode, step, state, action, reward, next_state, done, info, meta_data):
+    # test_case.episode, test_case.steps, original_state,  action_args, original_reward, original_next_state, original_terminated, original_truncated, original_info, test_case.meta_data)
+    def store_episode_step(self, episode, step, state, action, reward, next_state, done, truncated, info, meta_data):
         """
         Method for storing the test result.
 
@@ -46,6 +47,7 @@ class TestResult:
             reward (float): The reward returned by the original step function.
             next_state (object): The next state returned by the original step function.
             done (bool): The termination flag returned by the original step function.
+            truncated (bool): The truncation flag returned by the original step function.
             info (dict): The info dictionary returned by the original step function.
             meta_data (dict): The test case meta data for step.
         """
@@ -54,7 +56,7 @@ class TestResult:
             os.makedirs(episode_dir)
         path = self.create_file_path(episode, step)
         with open(path, 'wb') as f:
-            pickle.dump([state, action, reward, next_state, done, info, meta_data], f)
+            pickle.dump([state, action, reward, next_state, done, truncated, info, meta_data], f)
 
     def create_episode_path(self, episode):
         """
@@ -81,8 +83,8 @@ class TestResult:
         Returns:
             str: The file path.
         """
-        file_name = "episode_" + str(episode) + "_step_" + str(step) + ".pkl"
-        path = os.path.join(self.root_dir, file_name)
+        file_name = "step_" + str(step) + ".pkl"
+        path = os.path.join(self.root_dir,  "episode_" + str(episode), file_name)
         return path
 
     def load_episode_step(self, episode, step):

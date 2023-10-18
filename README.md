@@ -103,6 +103,8 @@ The `TestCase` class serves as a base class for creating test cases specifically
 #### 📊 TestResult Class
 The `TestResult` class serves as a utility for handling the storage and retrieval of test results. It is designed to manage file operations, such as creating folders and storing data, in a structured format within a root directory specified at initialization. The class offers methods for both storing and retrieving episode-specific information as well as step-specific data within each episode. The storage methods use JSON for meta-data and Pickle for complex objects like states and actions. Additionally, the class provides a method to delete the test folder, thereby cleaning up the stored data. The class ensures that the file structure is organized according to episodes and steps, making it easier to navigate and analyze test results. Overall, this class encapsulates the file I/O operations needed for effectively managing test data in an organized manner.
 
+It is possible to decorate `TestCase` instances with `TestResult` instances to enable the storage of test results.
+
 ### 👨🏼‍🔧 Configurator Class
 The `Configurator` class is a foundational class intended to configure gym environments.
 It has a single attribute, parameters, a dictionary expected to contain custom configuration parameters including a key for "state_variable_name" which indicates the name of the state variable in the gym environment. The `__init__(...)` method initializes the object with given parameters, expected to contain a key for "state_variable_name".

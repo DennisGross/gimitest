@@ -66,10 +66,9 @@ class GymDecorator:
                 return original_next_state, original_reward, original_done, original_truncated, original_info
             else:
                 for test_case in test_cases:
-                    tmp_next_state, tmp_reward, tmp_done, tmp_truncated, tmp_info = test_case.step_execute(env, env.tmp_storage_of_state, action_args, original_next_state, original_reward, original_done, original_truncated, original_info)
-                    test_case.step_store()
+                    tmp_state, tmp_action_args, tmp_next_state, tmp_reward, tmp_terminated, tmp_truncated, tmp_info = test_case.step_execute(env, env.tmp_storage_of_state, action_args, original_next_state, original_reward, original_done, original_truncated, original_info)
                 env.tmp_storage_of_state = original_next_state
-                return tmp_next_state, tmp_reward, tmp_done, tmp_truncated, tmp_info
+                return tmp_next_state, tmp_reward, tmp_terminated, tmp_truncated, tmp_info
         return wrapper
 
     @staticmethod
@@ -92,7 +91,6 @@ class GymDecorator:
                 for test_case in test_cases:
                     test_case.episode_execute()
                     test_case_messages.append(test_case.get_message())
-                    test_case.episode_store()
 
             # Call the original reset function
             next_state, info = original_reset_function(*args, **kwargs)
