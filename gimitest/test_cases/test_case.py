@@ -31,13 +31,14 @@ class TestCase():
         parameters (dict): Custom parameters for the test case.
     """
 
-    def __init__(self, parameters={}):
+    def __init__(self, parameters={}, test_result=None):
         """Initializes the TestCase object with the given parameters.
 
         Args:
             parameters (dict): Custom parameters for the test case.
         """
         self.parameters = parameters
+        self.test_result = test_result
 
     def step_execute(self, env, original_state, action_args, original_next_state, original_reward, original_terminated, original_truncated, original_info):
         """Method to be executed during each step of the environment.
@@ -57,6 +58,9 @@ class TestCase():
         """
         #print("I am the step_execute method of the TestCase class (modify me).")
         return original_next_state, original_reward, original_terminated, original_truncated, original_info
+
+
+    
 
     def step_store(self):
         """Method for storing information after each step.
