@@ -41,42 +41,43 @@ class Configurator():
         """
         self.parameters = parameters
 
-    def modify_state(self, env, n_state):
-        """Modifies the state of the environment based on the parameters.
+    def set_attribute(self, env, attribute_name, n_value):
+        """Sets the value of attribute attribute_name of the environment.
         
         Args:
-            env (object): The gym environment object whose state needs to be modified.
-            n_state (object): The new state to set.
+            env (object): The gym environment object whose attribute needs to be modified.
+            attribute_name (str): The name of the attribute to modify.
+            n_value (object): The new value to set.
 
         Returns:
-            None: Modifies the state of the environment in place.
+            None: Modifies the attribute of the environment in place.
         
         Raises:
-            ValueError: If no state variable name is provided in parameters.
+            ValueError: If attribute name does not exist in the environment.
         """
-        state_variable_name = self.parameters.get("state_variable_name", None)
-        if state_variable_name:
-            setattr(env, state_variable_name, n_state)
+        is_attr = hasattr(env, attribute_name)
+        if is_attr:
+            setattr(env, attribute_name, n_value)
         else:
-            raise ValueError("No state variable name provided in parameters (modify me).")
+            raise AttributeError(f"Attribute {attribute_name} does not exist in environment.")
 
-    def get_state(self, env):
-        """Fetches the current state of the environment based on the parameters.
+    def get_attribute(self, env, attribute_name):
+        """Fetches the current attribute value of the environment.
         
         Args:
             env (object): The gym environment object whose state needs to be fetched.
 
         Returns:
-            object: The state of the environment.
+            object: The attribute value of the environment.
 
         Raises:
-            ValueError: If no state variable name is provided in parameters.
+            ValueError: If attribute name does not exist in the environment.
         """
-        state_variable_name = self.parameters.get("state_variable_name", None)
-        if state_variable_name:
-            return getattr(env, state_variable_name)
+        is_attr = hasattr(env, attribute_name)
+        if is_attr:
+            return getattr(env, attribute_name)
         else:
-            raise ValueError("No state variable name provided in parameters (modify me).")
+            raise AttributeError(f"Attribute {attribute_name} does not exist in environment.")
 
     def configure(self, env, test_case_messages):
         """Configures the gym environment. Intended for overriding by subclasses.
@@ -88,5 +89,5 @@ class Configurator():
         Returns:
             None: Placeholder for child classes to implement custom configuration logic.
         """
-        print("I am the configure method of the Configurator class (modify me).")
-        return self.get_state(env)
+        #print("I am the configure method of the Configurator class (modify me).")
+        return self.get_attribute(env, self.parameters["state_variable_name"])

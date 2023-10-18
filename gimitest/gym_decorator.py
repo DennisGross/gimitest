@@ -66,7 +66,7 @@ class GymDecorator:
                 return original_next_state, original_reward, original_done, original_truncated, original_info
             else:
                 for test_case in test_cases:
-                    tmp_next_state, tmp_reward, tmp_done, tmp_truncated, tmp_info = test_case.step_execute(env, env.tmp_storage_of_state, action_args, original_reward, original_done, original_truncated, original_info)
+                    tmp_next_state, tmp_reward, tmp_done, tmp_truncated, tmp_info = test_case.step_execute(env, env.tmp_storage_of_state, action_args, original_next_state, original_reward, original_done, original_truncated, original_info)
                     test_case.step_store()
                 env.tmp_storage_of_state = original_next_state
                 return tmp_next_state, tmp_reward, tmp_done, tmp_truncated, tmp_info
@@ -96,6 +96,8 @@ class GymDecorator:
 
             # Call the original reset function
             next_state, info = original_reset_function(*args, **kwargs)
+            
+                
             env.tmp_storage_of_state = next_state
 
             # Apply configurator if set
