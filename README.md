@@ -102,6 +102,6 @@ The `TestCase` class serves as a base class for creating test cases specifically
 ### 👨🏼‍🔧 Configurator Class
 The `Configurator` class is a foundational class intended to configure gym environments.
 It has a single attribute, parameters, a dictionary expected to contain custom configuration parameters including a key for "state_variable_name" which indicates the name of the state variable in the gym environment. The `__init__(...)` method initializes the object with given parameters, expected to contain a key for "state_variable_name".
-The `modify_state(...)` method alters the state of the gym environment based on the parameters.
-the `get_state(...)` method etrieves the current state of the gym environment.
+The `set_attribute(...)` method alters the attribute of the gym environment based on the parameters.
+the `get_attribute(...)` method etrieves the current state of the gym environment.
 The `configure(...)` method is intended for overriding to provide custom environment configuration logic.
