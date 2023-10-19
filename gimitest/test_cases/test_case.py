@@ -72,8 +72,8 @@ class TestCase():
         pass
 
 
-    def get_message(self):
-        """Method for getting messages or information to be passed along.
+    def create_message(self):
+        """Method for creating messages or information to be passed along.
         
         Returns:
             dict: The message to be passed along.
@@ -81,11 +81,21 @@ class TestCase():
         #print("I am the get_message method of the TestCase class (modify me).")
         return {}
 
+
+    def get_message(self, msg):
+        """
+        Method for getting messages from the configurator.
+        """
+        # Extend meta_data dictionary with all key, value pairs from msg
+        self.meta_data["configurator"] = msg
+
+
     def episode_increment(self):
         """
         Method for incrementing the episode number.
         """
         self.episode += 1
+        
 
     def step_increment(self):
         """

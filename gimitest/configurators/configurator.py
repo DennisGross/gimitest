@@ -151,3 +151,13 @@ class Configurator():
         """
         #print("I am the configure method of the Configurator class (modify me).")
         return self.get_attribute(env, self.parameters["state_variable_name"])
+
+
+    def create_message(self):
+        """Method for getting messages or information to be passed along.
+        
+        Returns:
+            dict: The message to be passed along.
+        """
+        #print("I am the get_message method of the TestCase class (modify me).")
+        return {}

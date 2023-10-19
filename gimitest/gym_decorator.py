@@ -74,6 +74,8 @@ class GymDecorator:
     @staticmethod
     def __decorate_reset_function(env, original_reset_function, test_cases, configurator):
         """Internal method to decorate the reset function of a gym environment.
+        The goal of this function is to use the test cases IN THE END OF THE EPISODE and then use its results to configure the initial state of the next episode via the configurator.
+        The configurator has then the possibility to broadcast an message to all test cases.
         
         Args:
             env (object): The gym environment to decorate.
@@ -90,7 +92,7 @@ class GymDecorator:
             if test_cases is not None:
                 for test_case in test_cases:
                     test_case.episode_execute()
-                    test_case_messages.append(test_case.get_message())
+                    test_case_messages.append(test_case.create_message())
 
             # Call the original reset function
             next_state, info = original_reset_function(*args, **kwargs)
@@ -101,5 +103,11 @@ class GymDecorator:
             # Apply configurator if set
             if configurator is not None:
                 env.tmp_storage_of_state = configurator.configure(env, test_case_messages)
+                if test_cases is not None:
+                    for test_case in test_cases:
+                        test_case.get_message(configurator.create_message())
+
+            
+
             return env.tmp_storage_of_state, info
         return wrapper
