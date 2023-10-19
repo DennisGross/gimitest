@@ -2,7 +2,7 @@ import pickle
 import json
 import os
 
-class TestResult:
+class TestLogger:
 
     def __init__(self, root_dir):
         """Initializes the TestResult object with given parameters.
