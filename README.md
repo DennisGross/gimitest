@@ -113,7 +113,7 @@ the `get_attribute(...)` method etrieves the current state of the gym environmen
 The `configure(...)` method is intended for overriding to provide custom environment configuration logic.
 
 
-### Communication Between TestCase and Configurator
+### 📨 Communication Between TestCase and Configurator
 The communication between the `TestCase` and `Configurator` classes is based on messages and is done in the reset method of the `Gym` class.
 The `TestCase` class can send messages to the `Configurator` class via the `create_message(...)` method.
 The `Configurator` class can receive messages from the `TestCase` class via the `configure(...)` method and send messages to the `TestCase` class via the `create_message(...)` method.
