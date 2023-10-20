@@ -105,8 +105,7 @@ The `TestLogger` class serves as a utility for handling the storage and retrieva
 
 It is possible to decorate `TestCase` instances with `TestLogger` instances to enable the storage of test results.
 
-
-### 📊 TestAnalyse Class
+#### 📊 TestAnalyse Class
 The `TestAnalyse` class serves as a utility for analyzing the test logs.
 It allows to aggregate the test results over multiple episodes of a specific test case and more.
 
