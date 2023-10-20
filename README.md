@@ -100,10 +100,17 @@ def wrapper(*action_args, **kwargs):
 The `TestCase` class serves as a base class for creating test cases specifically tailored for gym environments. It contains a single attribute, parameters, which is a dictionary meant for holding custom parameters for individual test cases. The class has various methods that can be overridden to provide custom behavior during testing. The `__init__(...)` method initializes the class instance with these custom parameters. The `step_execute(...)` method is designed to be called at each step in the gym environment, taking various arguments like current state, action arguments, and original outcomes like next state and reward. It returns potentially modified versions of these outcomes. The `step_store(...)` and `step_load(...)` methods are placeholders for storing and loading data relevant to each step, respectively. Similarly, `episode_execute(...)`, `episode_store(...)`, and `episode_load(...)` methods serve as placeholders for operations at the start and end of each episode. Lastly, the `get_message(...)` method is designed to return messages or information as a dictionary to inform the configurator about the execution of the test case.
 
 
-#### 📊 TestLogger Class
+#### 📝 TestLogger Class
 The `TestLogger` class serves as a utility for handling the storage and retrieval of test results. It is designed to manage file operations, such as creating folders and storing data, in a structured format within a root directory specified at initialization. The class offers methods for both storing and retrieving episode-specific information as well as step-specific data within each episode. The storage methods use JSON for meta-data and Pickle for complex objects like states and actions. Additionally, the class provides a method to delete the test folder, thereby cleaning up the stored data. The class ensures that the file structure is organized according to episodes and steps, making it easier to navigate and analyze test results. Overall, this class encapsulates the file I/O operations needed for effectively managing test data in an organized manner.
 
 It is possible to decorate `TestCase` instances with `TestLogger` instances to enable the storage of test results.
+
+
+### 📊 TestAnalyse Class
+The `TestAnalyse` class serves as a utility for analyzing the test logs.
+It allows to aggregate the test results over multiple episodes of a specific test case and more.
+
+
 
 ### 👨🏼‍🔧 Configurator Class
 The `Configurator` class is a foundational class intended to configure gym environments.

@@ -34,6 +34,9 @@ class TestCaseDecorator:
             test_result.store_episode_step(test_case.episode, test_case.steps, original_state,  action_args, original_next_state, original_reward, original_terminated, original_truncated, original_info, test_case.meta_data)
             # Increment the step
             test_case.step_increment()
+            if original_terminated or original_truncated:
+                # Store the episode
+                test_result.store_episode(test_case.episode, test_case.meta_data)
             return original_state, action_args, original_next_state, original_reward, original_terminated, original_truncated, original_info
 
 
@@ -56,7 +59,7 @@ class TestCaseDecorator:
             # Call the original step function
             original_episode_execute(*action_args, **kwargs)
             # Store the episode
-            test_result.store_episode(test_case.episode, test_case.meta_data)
+            #test_result.store_episode(test_case.episode, test_case.meta_data)
             # Increment the episode
             test_case.episode_increment()
             # Reset step

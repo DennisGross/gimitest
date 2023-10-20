@@ -127,6 +127,16 @@ class TestLogger:
         path = os.path.join(episode_dir, "meta.json")
         with open(path, 'r') as f:
             return json.load(f)
+
+    
+    def count_episodes(self):
+        """
+        Method for counting the number of episodes in the test folder.
+
+        Returns:
+            int: The number of episodes.
+        """
+        return len([name for name in os.listdir(self.root_dir) if os.path.isdir(os.path.join(self.root_dir, name))])
     
 
     def delete_test_folder(self):
