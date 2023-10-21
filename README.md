@@ -97,7 +97,10 @@ def wrapper(*action_args, **kwargs):
 ```
 
 Additionally to to the gymnasium decorator, we use a test case decorator to extend the TestCase methods with the capability to store and load data via a logger.
-We can see the decorator design pattern in the following diagram:
+We can see the decorator design pattern in the following diagram.
+The dark gray boxes represent the decorators.
+The `TestCaseDecorator` uses a `TestLogger` to extend the functionality of the `TestCase` class.
+The `GymDecorator` uses the `Configurator` and/or `TestCase` to extend the functionality of the `step(...)` and `reset(...)` methods of the Gym environment.
 
 ![Decoration Pattern](images/decoration_pattern.png)
 
