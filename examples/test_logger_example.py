@@ -12,7 +12,7 @@ env = gym.make('CartPole-v1')
 # Test Case
 m_logger = TestLogger("test_result")
 m_test_case = TestCase()
-m_test_case = TestCaseDecorator.decorate_test_case_with_test_result(m_test_case, m_logger)
+m_test_case = TestCaseDecorator.decorate_test_case_with_test_logger(m_test_case, m_logger)
 # List of Test Cases
 test_cases = [m_test_case]
 # Configurator
