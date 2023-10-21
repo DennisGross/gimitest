@@ -96,6 +96,11 @@ def wrapper(*action_args, **kwargs):
         return tmp_next_state, tmp_reward, tmp_done, tmp_truncated, tmp_info
 ```
 
+Additionally to to the gymnasium decorator, we use a test case decorator to extend the TestCase methods with the capability to store and load data via a logger.
+We can see the decorator design pattern in the following diagram:
+
+![Decoration Pattern](images/decoration_pattern.png)
+
 ### 👮🏼‍♂️ TestCase Class
 The `TestCase` class serves as a base class for creating test cases specifically tailored for gym environments. It contains a single attribute, parameters, which is a dictionary meant for holding custom parameters for individual test cases. The class has various methods that can be overridden to provide custom behavior during testing. The `__init__(...)` method initializes the class instance with these custom parameters. The `step_execute(...)` method is designed to be called at each step in the gym environment, taking various arguments like current state, action arguments, and original outcomes like next state and reward. It returns potentially modified versions of these outcomes. The `step_store(...)` and `step_load(...)` methods are placeholders for storing and loading data relevant to each step, respectively. Similarly, `episode_execute(...)`, `episode_store(...)`, and `episode_load(...)` methods serve as placeholders for operations at the start and end of each episode. Lastly, the `get_message(...)` method is designed to return messages or information as a dictionary to inform the configurator about the execution of the test case.
 
@@ -108,7 +113,6 @@ It is possible to decorate `TestCase` instances with `TestLogger` instances to e
 #### 📊 TestAnalyse Class
 The `TestAnalyse` class serves as a utility for analyzing the test logs.
 It allows to aggregate the test results over multiple episodes of a specific test case and more.
-
 
 
 ### 👨🏼‍🔧 Configurator Class
