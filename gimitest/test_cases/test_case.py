@@ -89,6 +89,14 @@ class TestCase():
         # Extend meta_data dictionary with all key, value pairs from msg
         self.meta_data["configurator"] = msg
 
+    def get_pre_reset_message(self, msg):
+        """
+        Method for getting messages from the configurator.
+        """
+        # Extend meta_data dictionary with all key, value pairs from msg
+        self.meta_data["configurator"] = msg
+
+
 
     def episode_increment(self):
         """

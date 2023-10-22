@@ -58,15 +58,20 @@ class GymDecorator:
         """
         def wrapper(*action_args, **kwargs):
             # Call the original step function
-            original_next_state, original_reward, original_done, original_truncated, original_info = original_step_function(*action_args, **kwargs)
+            original_next_state, original_reward, original_terminated, original_truncated, original_info = original_step_function(*action_args, **kwargs)
             
             # Handle test cases if any
             if test_cases is None:
                 env.tmp_storage_of_state = original_next_state
-                return original_next_state, original_reward, original_done, original_truncated, original_info
+                return original_next_state, original_reward, original_terminated, original_truncated, original_info
             else:
+                tmp_next_state = original_next_state
+                tmp_reward = original_reward
+                tmp_terminated = original_terminated
+                tmp_truncated = original_truncated
+                tmp_info = original_info
                 for test_case in test_cases:
-                    tmp_state, tmp_action_args, tmp_next_state, tmp_reward, tmp_terminated, tmp_truncated, tmp_info = test_case.step_execute(env, env.tmp_storage_of_state, action_args, original_next_state, original_reward, original_done, original_truncated, original_info)
+                    tmp_state, tmp_action_args, tmp_next_state, tmp_reward, tmp_terminated, tmp_truncated, tmp_info = test_case.step_execute(env, env.tmp_storage_of_state, action_args, original_next_state, original_reward, original_terminated, original_truncated, original_info)
                 env.tmp_storage_of_state = original_next_state
                 return tmp_next_state, tmp_reward, tmp_terminated, tmp_truncated, tmp_info
         return wrapper
@@ -94,14 +99,28 @@ class GymDecorator:
                     test_case.episode_execute()
                     test_case_messages.append(test_case.create_message())
 
+            # Pre reset configure
+            if configurator is not None:
+                # Get already the messages from the test cases
+                more_args = configurator.pre_reset_configure(env, test_case_messages)
+                # Check if more_args is instance
+                if isinstance(more_args, dict)==False:
+                    raise TypeError("The pre_reset_configure method of the configurator must return a dictionary.")
+                # update kwars with more_args
+                kwargs.update(more_args)
+                if test_cases is not None:
+                    for test_case in test_cases:
+                        # Get the message from the configurator for all test cases
+                        test_case.get_pre_reset_message(configurator.create_pre_reset_message())
+
             # Call the original reset function
             next_state, info = original_reset_function(*args, **kwargs)
             
-                
             env.tmp_storage_of_state = next_state
 
             # Apply configurator if set
             if configurator is not None:
+                # Get same test case messages as before but after reset
                 env.tmp_storage_of_state = configurator.configure(env, test_case_messages)
                 if test_cases is not None:
                     for test_case in test_cases:

@@ -43,6 +43,16 @@ class ParameterConfigurator(Configurator):
         return self.get_attribute(env, self.parameters["state_variable_name"])
 
 
+    def create_pre_reset_message(self):
+        """Method for getting messages or information to be passed along.
+        
+        Returns:
+            dict: The message to be passed along.
+        """
+        # Create a message with the parameters and values
+        return {}
+
+
     def create_message(self):
         """Method for getting messages or information to be passed along.
         
@@ -78,7 +88,6 @@ for _ in range(100):
 m_analytics = TestAnalyse(m_logger)
 m_analytics.plot_key_value_over_episodes("collected_reward")
 m_analytics.plot_key1_key2_and_value("parameter1", "parameter2", "collected_reward", xlabel="masscart", ylabel="length")
-
 
 # Delete the test logs
 m_logger.delete_test_folder()

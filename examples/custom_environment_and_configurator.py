@@ -69,12 +69,12 @@ env = DummyEnv()
 
 # Reachability test case
 test_case = ReachabilityTestCase({"goal": 5})
-test_caes = [test_case]
+test_cases = [test_case]
 
 # Configurator
 configurator = RandomConfigurator({"state_variable_name": "position"})
 # Decorate gym
-env = GymDecorator.decorate_gym(env, test_caes, configurator)
+env = GymDecorator.decorate_gym(env, test_cases, configurator)
 
 
 # Interact with the environment
