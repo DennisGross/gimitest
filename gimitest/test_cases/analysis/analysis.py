@@ -1,4 +1,12 @@
 import matplotlib.pyplot as plt
+from sklearn import tree
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score
+import matplotlib.pyplot as plt
+import numpy as np
+from sklearn.decomposition import PCA
+from sklearn.manifold import TSNE
+
 class TestAnalyse:
 
     def __init__(self, test_logger, parameters = {}):
@@ -99,3 +107,83 @@ class TestAnalyse:
         plt.clf()
 
     
+    def plot_state_action_behaviour(self):
+        states = []
+        actions = []
+        number_of_episodes = self.test_logger.count_episodes()
+        for episode in range(1, number_of_episodes):
+            try:
+                number_of_steps = self.test_logger.count_episode_steps(episode)
+                for step in range(0, number_of_steps):
+                    state = self.test_logger.load_episode_step(episode, step)[0]
+                    action = int(str(self.test_logger.load_episode_step(episode, step)[1]).replace(",", "").replace("(", "").replace(")", ""))
+                    states.append(state)
+                    actions.append(action)
+            except Exception as e:
+                print(e)
+                continue
+        
+        # Split data into training and testing sets
+        X_train, X_test, y_train, y_test = train_test_split(states, actions, test_size=0.9, random_state=42)
+        
+        # Train a decision tree classifier
+        clf = tree.DecisionTreeClassifier()
+        clf = clf.fit(X_train, y_train)
+        
+        # Evaluate the model
+        y_pred = clf.predict(X_test)
+        accuracy = accuracy_score(y_test, y_pred)
+        print(f'Model Accuracy: {accuracy * 100:.2f}%')
+        
+        # Plot the tree with better resolution and annotations
+        fig, ax = plt.subplots(figsize=(40, 20))  # Increase figure size for better resolution
+        tree.plot_tree(clf, ax=ax, filled=True, fontsize=10)
+        plt.title('State-Action Behavior Tree')
+        plt.savefig('state_action_behaviour_high_res.png', dpi=300)  # Save with higher DPI for better resolution
+        plt.clf()
+
+    def plot_state_reward_map(self):
+        states = []
+        rewards = []
+        number_of_episodes = self.test_logger.count_episodes()
+        for episode in range(1, number_of_episodes):
+            try:
+                number_of_steps = self.test_logger.count_episode_steps(episode)
+                for step in range(0, number_of_steps):
+                    state = self.test_logger.load_episode_step(episode, step)[0]
+                    reward = self.test_logger.load_episode_step(episode, step)[2]
+                    states.append(state)
+                    rewards.append(reward)
+            except Exception as e:
+                print(e)
+                continue
+
+        # Sample data: states as a numpy array of shape (n_samples, n_features)
+        # rewards as a numpy array of shape (n_samples, )
+        states = np.array(states)
+        rewards = np.array(rewards)
+
+        
+        # Load your own 'states' and 'rewards' data here
+
+        # Perform PCA
+        pca = PCA(n_components=2)
+        states_pca = pca.fit_transform(states)
+
+        # Perform t-SNE
+        tsne = TSNE(n_components=2, perplexity=30, n_iter=300)
+        states_tsne = tsne.fit_transform(states)
+
+        # Create plots
+        fig, axs = plt.subplots(1, 1)
+
+        # PCA Plot
+        sc = axs.scatter(states_pca[:, 0], states_pca[:, 1], c=rewards, cmap='viridis')
+        axs.set_title("PCA")
+        axs.set_xlabel("First Principal Component")
+        axs.set_ylabel("Second Principal Component")
+        plt.colorbar(sc, ax=axs)
+
+
+        plt.savefig('pca_tsne.png')
+

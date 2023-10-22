@@ -43,3 +43,5 @@ for i in range(1,m_logger.count_episodes()):
 m_analytics = TestAnalyse(m_logger)
 m_analytics.plot_key_value_over_episodes("collected_reward")
 m_analytics.plot_action_distribution()
+m_analytics.plot_state_action_behaviour()
+m_analytics.plot_state_reward_map()
