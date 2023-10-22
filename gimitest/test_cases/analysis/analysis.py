@@ -72,5 +72,30 @@ class TestAnalyse:
         plt.savefig(key1 + '_' + key2 + '_' + value_key + '.png')
         plt.clf()
 
+    def plot_action_distribution(self):
+        number_of_episodes = self.test_logger.count_episodes()
+        actions = []
+        for episode in range(1, number_of_episodes):
+            try:
+                number_of_steps = self.test_logger.count_episode_steps(episode)
+                for step in range(0, number_of_steps):
+                    action = str(self.test_logger.load_episode_step(episode, step)[1])
+                    actions.append(action)
+                
+            except Exception as e:
+                print(e)
+                continue
+        # Group strings in list and count their occurences
+        actions = [[x,actions.count(x)] for x in set(actions)]
+        
+        # Plot distribution in histogram
+        plt.bar([x[0] for x in actions], [x[1] for x in actions])
+        plt.ylabel('number of actions')
+        plt.xlabel('action')
+        #plt.grid(0.2)
+        # only horizontal grid
+        plt.gca().yaxis.grid(True)
+        plt.savefig('action_distribution.png')
+        plt.clf()
 
     

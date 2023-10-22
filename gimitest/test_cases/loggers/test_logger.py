@@ -139,6 +139,19 @@ class TestLogger:
         """
         return len([name for name in os.listdir(self.root_dir) if os.path.isdir(os.path.join(self.root_dir, name))])
     
+    def count_episode_steps(self, episode):
+        """
+        Method for counting the number of steps in the test episode.
+
+        Args:
+            episode (int): The episode number.
+
+        Returns:
+            int: The number of steps.
+        """
+        episode_dir = self.create_episode_path(episode)
+        # Count all file names that start with step and end with .pkl
+        return len([name for name in os.listdir(episode_dir) if os.path.isfile(os.path.join(episode_dir, name)) and name.startswith("step") and name.endswith(".pkl")])
 
     def delete_test_folder(self):
         """

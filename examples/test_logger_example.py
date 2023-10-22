@@ -30,6 +30,16 @@ for episode in range(10):
         if done or truncated:
             state, info = env.reset()
 
+print("Number of episodes: ", m_logger.count_episodes())
+for i in range(1,m_logger.count_episodes()):
+    print("Episode: ", i)
+    print(m_logger.create_episode_path(i))
+    print(m_logger.count_episode_steps(i))
+    print(m_logger.load_episode_step(i, 0)[1])
+
+
+
 # Analyze the test logs
 m_analytics = TestAnalyse(m_logger)
 m_analytics.plot_key_value_over_episodes("collected_reward")
+m_analytics.plot_action_distribution()
