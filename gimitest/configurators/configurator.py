@@ -165,6 +165,19 @@ class Configurator():
         #print("I am the configure method of the Configurator class (modify me).")
         return self.get_attribute(env, self.parameters["state_variable_name"])
 
+    def active_configuration(self, env):
+        """Method for configuring the environment at each step
+        
+        Args:
+            env (object): The gym environment to configure.
+            test_case_messages (list): A list of messages from test cases that may be used for configuration.
+
+        Returns:
+            None: Placeholder for child classes to implement custom configuration logic.
+        """
+        #print("I am the active_configuration method of the Configurator class (modify me).")
+        return {}
+
 
     def create_message(self):
         """Method for getting messages or information to be passed along.

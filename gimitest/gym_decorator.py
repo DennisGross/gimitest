@@ -45,7 +45,7 @@ class GymDecorator:
         return env
 
     @staticmethod
-    def __decorate_step_function(env, original_step_function, test_cases):
+    def __decorate_step_function(env, original_step_function, test_cases, configurator=None):
         """Internal method to decorate the step function of a gym environment.
         
         Args:
@@ -57,6 +57,9 @@ class GymDecorator:
             function: The decorated step function.
         """
         def wrapper(*action_args, **kwargs):
+            if configurator != None:
+                # Active Testing with old test messages
+                configurator.active_configuration(env)
             # Call the original step function
             original_next_state, original_reward, original_terminated, original_truncated, original_info = original_step_function(*action_args, **kwargs)
             

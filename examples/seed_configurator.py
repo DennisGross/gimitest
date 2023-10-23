@@ -41,7 +41,7 @@ env = GymDecorator.decorate_gym(env,  test_cases, configurator)
 state, info = env.reset()
 for _ in range(1000):
     action = env.action_space.sample()  # Randomly sample an action
-    next_state, reward, done, truncated, info = env.step(action)
+    next_state, reward, done, truncated, info = env.step(0)
     print(f"State: {state}, Action: {action}, Next State: {next_state}, Reward: {reward}, Done: {done}")
     if done or truncated:
         state, info = env.reset()
