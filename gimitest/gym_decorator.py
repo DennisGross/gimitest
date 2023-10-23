@@ -40,7 +40,7 @@ class GymDecorator:
             object: The decorated gym environment.
         """
         env.tmp_storage_of_state = None
-        env.step = GymDecorator.__decorate_step_function(env, env.step, test_cases)
+        env.step = GymDecorator.__decorate_step_function(env, env.step, test_cases, configurator)
         env.reset = GymDecorator.__decorate_reset_function(env, env.reset, test_cases, configurator)
         return env
 
