@@ -139,7 +139,7 @@ class Configurator():
         else:
             raise AttributeError(f"Attribute {attribute_name} does not exist in environment.")
 
-    def pre_reset_configure(self, env, test_case_messages):
+    def configuration_pre_reset(self, env, test_case_messages):
         """Method for configuring the environment before the reset method is called.
         
         Args:
@@ -152,7 +152,7 @@ class Configurator():
         #print("I am the pre_reset_configure method of the Configurator class (modify me).")
         return {}
 
-    def configure(self, env, test_case_messages):
+    def configuration_post_reset(self, env, test_case_messages):
         """Configures the gym environment. Intended for overriding by subclasses.
         
         Args:
@@ -165,8 +165,21 @@ class Configurator():
         #print("I am the configure method of the Configurator class (modify me).")
         return self.get_attribute(env, self.parameters["state_variable_name"])
 
-    def active_configuration(self, env):
-        """Method for configuring the environment at each step
+    def active_configuration_pre_step(self, env):
+        """Method for configuring the environment before each step
+        
+        Args:
+            env (object): The gym environment to configure.
+            test_case_messages (list): A list of messages from test cases that may be used for configuration.
+
+        Returns:
+            None: Placeholder for child classes to implement custom configuration logic.
+        """
+        #print("I am the active_configuration method of the Configurator class (modify me).")
+        return {}
+
+    def active_configuration_post_step(self, env):
+        """Method for configuring the environment after each step
         
         Args:
             env (object): The gym environment to configure.
@@ -179,7 +192,7 @@ class Configurator():
         return {}
 
 
-    def create_message(self):
+    def create_pre_reset_message(self):
         """Method for getting messages or information to be passed along.
         
         Returns:
@@ -188,7 +201,7 @@ class Configurator():
         #print("I am the get_message method of the TestCase class (modify me).")
         return {}
 
-    def create_pre_reset_message(self):
+    def create_post_reset_message(self):
         """Method for getting messages or information to be passed along.
         
         Returns:

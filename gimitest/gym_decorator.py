@@ -59,9 +59,12 @@ class GymDecorator:
         def wrapper(*action_args, **kwargs):
             if configurator != None:
                 # Active Testing with old test messages
-                configurator.active_configuration(env)
+                configurator.active_configuration_pre_step(env)
             # Call the original step function
             original_next_state, original_reward, original_terminated, original_truncated, original_info = original_step_function(*action_args, **kwargs)
+            if configurator != None:
+                # Active Testing with old test messages
+                configurator.active_configuration_post_step(env)
             
             # Handle test cases if any
             if test_cases is None:
@@ -105,7 +108,7 @@ class GymDecorator:
             # Pre reset configure
             if configurator is not None:
                 # Get already the messages from the test cases
-                more_args = configurator.pre_reset_configure(env, test_case_messages)
+                more_args = configurator.configuration_pre_reset(env, test_case_messages)
                 # Check if more_args is instance
                 if isinstance(more_args, dict)==False:
                     raise TypeError("The pre_reset_configure method of the configurator must return a dictionary.")
@@ -124,10 +127,10 @@ class GymDecorator:
             # Apply configurator if set
             if configurator is not None:
                 # Get same test case messages as before but after reset
-                env.tmp_storage_of_state = configurator.configure(env, test_case_messages)
+                env.tmp_storage_of_state = configurator.configuration_post_reset(env, test_case_messages)
                 if test_cases is not None:
                     for test_case in test_cases:
-                        test_case.get_message(configurator.create_message())
+                        test_case.get_message(configurator.create_post_reset_message())
 
             
 

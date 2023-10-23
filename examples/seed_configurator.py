@@ -15,7 +15,7 @@ class SeedConfigurator(Configurator):
     def __init__(self, parameters={}):
         super(SeedConfigurator, self).__init__(parameters)
 
-    def pre_reset_configure(self, env, test_case_messages):
+    def configuration_pre_reset(self, env, test_case_messages):
         # Set environment seed
         random.seed(self.parameters["seed"])
         np.random.seed(self.parameters["seed"])

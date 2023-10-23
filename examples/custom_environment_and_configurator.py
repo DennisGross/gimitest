@@ -43,7 +43,7 @@ class RandomConfigurator(Configurator):
     def __init__(self, parameters={}):
         super(RandomConfigurator, self).__init__(parameters)
 
-    def configure(self, env, test_case_messages):
+    def configuration_post_reset(self, env, test_case_messages):
         state_variable_name = self.parameters["state_variable_name"]
         # Get random position
         random_state = np.random.randint(0, 4)

@@ -12,7 +12,7 @@ class ParameterConfigurator(Configurator):
         
 
 
-    def configure(self, env, test_case_messages):
+    def configuration_post_reset(self, env, test_case_messages):
         """Configures the gym environment. Intended for overriding by subclasses.
         
         Args:
