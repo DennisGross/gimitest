@@ -17,9 +17,9 @@ Fifth, the GymDecorator class is employed to extend the `reset(...)` and `step(.
 Then, the decorated environment can then be executed to evaluate the RL agent's performance.
 ```
 import gymnasium as gym
-from gym_decorator import GymDecorator
-from test_cases.test_case import TestCase
-from configurators.configurator import Configurator
+from gimitest.gym_decorator import GymDecorator
+from gimitest.test_cases.test_case import TestCase
+from gimitest.configurators.configurator import Configurator
 
 # Init Gym
 env = gym.make('CartPole-v1')
