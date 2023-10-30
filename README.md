@@ -134,7 +134,6 @@ The `Configurator` class can receive messages from the `TestCase` class via the 
 
 The `TestCase` send first the message and receives the corresponding message from the `Configurator` in the end of the episode.
 This allows us to control the configuration of the environment based on the test case execution.
-<<<<<<< HEAD
 
 
 ## Use Cases
@@ -199,5 +198,3 @@ The RL agent is trained to balance the pole on the cart with a specific environm
 
 ##### RL Retraining
 The Gimitest framework can be used to retrain the RL agent based on the test results by letting the RL agent train during the testing.
-=======
->>>>>>> 23723d67d7e0dc6b5b860d8ef577bf281d845bc5
