@@ -112,7 +112,12 @@ class Configurator():
                 return getattr(obj, attribute_name)
             
             for attr in dir(obj):
-                nested_attr = getattr(obj, attr)
+                try:
+                    nested_attr = getattr(obj, attr)
+                except:
+                    print("Error", obj, attr)
+                    continue
+                
                 if isinstance(nested_attr, object) and not isinstance(nested_attr, (str, int, float, bytes)):
                     q.put(nested_attr)
                     
@@ -133,7 +138,6 @@ class Configurator():
         """
         
         attr_value = self.__get_breadth_first_attribute(env, attribute_name)
-        
         if attr_value is not None:
             return attr_value
         else:

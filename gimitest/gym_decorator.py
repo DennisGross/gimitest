@@ -127,7 +127,9 @@ class GymDecorator:
             # Apply configurator if set
             if configurator is not None:
                 # Get same test case messages as before but after reset
-                env.tmp_storage_of_state = configurator.configuration_post_reset(env, test_case_messages)
+                tmp_state = configurator.configuration_post_reset(env, test_case_messages)
+                if tmp_state is not None:
+                    env.tmp_storage_of_state = tmp_state
                 if test_cases is not None:
                     for test_case in test_cases:
                         test_case.get_message(configurator.create_post_reset_message())

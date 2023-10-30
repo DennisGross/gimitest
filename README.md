@@ -4,6 +4,7 @@ It offers predefined `TestCase` classes along with the capability to develop cus
 The availability of both standard and customizable `Configurator` classes further enables the sampling of RL agent behavior under varied initial states and environment parameters.
 
 
+
 ## 🚀 Getting Started
 Install package via:
 `pip install git+https://github.com/DennisGross/gimitest.git`
@@ -133,3 +134,67 @@ The `Configurator` class can receive messages from the `TestCase` class via the 
 
 The `TestCase` send first the message and receives the corresponding message from the `Configurator` in the end of the episode.
 This allows us to control the configuration of the environment based on the test case execution.
+
+
+## Use Cases
+The following use cases demonstrate the capabilities of the Gimitest framework.
+
+
+### CartPole Balancing: A Study in Reinforcement Learning Control
+The full code can be found in examples/cartpole_balancing.py.
+
+This use case explores the potential of the Gimitest framework in the realm of the CartPole environment, a standard benchmark in OpenAI's Gym toolkit for developing and comparing reinforcement learning algorithms. The objective of the CartPole task is to balance a vertically standing pole on a horizontally moving cart.
+
+In this scenario, a Reinforcement Learning (RL) agent is tasked with controlling the cart. The agent receives the current state of the system as its input, which includes variables such as the cart's position, the pole's angle relative to vertical, and their respective velocities. Based on this input, the RL agent outputs an action, which involves moving the cart either to the left or to the right.
+
+
+
+#### RL Training
+The training phase involves optimizing the deep RL agent's policy to maximize the accumulated reward over time. This serves as an indicator of how well the agent has learned to manage the control problem of balancing the pole on the moving cart. 
+The average reward over 100 evaluation episodes for the trained RL agent is 282.53.
+
+#### RL Testing
+The Gimitest framework can be used to test the RL agent in the following scenarios:
+1. Test the RL agent under different initial positions.
+2. Test the RL agent under different pole conditions.
+3. Test the RL agent with different sensor noise.
+4. Test the RL agent with abrupt environment changes.
+
+
+##### Test RL agent under different initial positions
+The RL agent is trained to balance the pole on the cart starting from the initial position of the pole being upright and the cart being at the center of the track. However, the RL agent may not be able to balance the pole if it is placed in a different initial position. The Gimitest framework can be used to test the RL agent's performance under different initial positions.
+
+The following figure shows the action distribution over 1000 episodes for the RL agent under different initial positions.
+The balanced action distribution indicates in the cartpole environment a well trained RL agent.
+
+![Action Distribution](images/cartpole_action_distribution.png)
+
+The following figure shows the reward of the RL agent under different initial positions over 500 episodes.
+We see that for most of the initial positions, the RL agent is able to balance the pole on the cart with roughly the same performance.
+![Different Initial States](images/cartpole_different_init_states_reward.png)
+
+##### Test RL agent under different cart masses and pole lengths
+The RL agent is trained to balance the pole on the cart with a specific mass and pole length. However, the RL agent may not be able to balance the pole if the cart mass or pole length is changed. The Gimitest framework can be used to test the RL agent's performance under different cart masses and pole lengths.
+
+The following figure shows the reward of the RL agent under different cart masses and pole lengths.
+We can see the regions where the RL agent is able to balance the pole on the cart better (lighter color) than in other regions (darker color).
+
+![Mass Length](images/cartpole_mass_length_reward.png)
+
+
+
+
+##### Test the RL agent with different sensor noise
+The RL agent is trained to balance the pole on the cart with perfect sensor readings. However, the RL agent may not be able to balance the pole if the sensor readings are noisy. The Gimitest framework can be used to test the RL agent's performance under different sensor noise.
+
+In the following figure, we can see the reward of the RL agent under different sensor noise. In comparison to the RL training average reward of 282, we can see that the RL agent's performance decreases with sensor noise.
+
+![Mass Length](images/cartpole_noisy_sensors_reward.png)
+
+
+##### Test the RL agent with abrupt environment changes
+The RL agent is trained to balance the pole on the cart with a specific environment. However, the RL agent may not be able to balance the pole if the environment changes abruptly. The Gimitest framework can be used to test the RL agent's performance under different environment changes.
+
+
+##### RL Retraining
+The Gimitest framework can be used to retrain the RL agent based on the test results by letting the RL agent train during the testing.

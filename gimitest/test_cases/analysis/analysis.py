@@ -25,7 +25,7 @@ class TestAnalyse:
 
     
 
-    def plot_key_value_over_episodes(self, key):
+    def plot_key_value_over_episodes(self, key, filepath=None):
         number_of_episodes = self.test_logger.count_episodes()
         values = []
         for episode in range(1, number_of_episodes):
@@ -43,11 +43,14 @@ class TestAnalyse:
         plt.ylabel(key)
         plt.xlabel('episode')
         plt.grid(0.2)
-        plt.savefig(key + '.png')
+        if filepath == None:
+            plt.savefig(key + '.png')
+        else:
+            plt.savefig(filepath)
         plt.clf()
 
 
-    def plot_key1_key2_and_value(self, key1, key2, value_key, xlabel=None, ylabel=None):
+    def plot_key1_key2_and_value(self, key1, key2, value_key, xlabel=None, ylabel=None, filepath=None):
         number_of_episodes = self.test_logger.count_episodes()
         para1 = []
         para2 = []
@@ -77,10 +80,14 @@ class TestAnalyse:
         else:
             plt.ylabel(ylabel)
         plt.grid(0.2)
-        plt.savefig(key1 + '_' + key2 + '_' + value_key + '.png')
+        if filepath == None:
+            plt.savefig(key1 + '_' + key2 + '_' + value_key + '.png')
+        else:
+            plt.savefig(filepath)
+        
         plt.clf()
 
-    def plot_action_distribution(self):
+    def plot_action_distribution(self, filepath=None):
         number_of_episodes = self.test_logger.count_episodes()
         actions = []
         for episode in range(1, number_of_episodes):
@@ -103,11 +110,14 @@ class TestAnalyse:
         #plt.grid(0.2)
         # only horizontal grid
         plt.gca().yaxis.grid(True)
-        plt.savefig('action_distribution.png')
+        if filepath == None:
+            plt.savefig('action_distribution.png')
+        else:
+            plt.savefig(filepath)
         plt.clf()
 
     
-    def plot_state_action_behaviour(self):
+    def plot_state_action_behaviour(self, filepath=None):
         states = []
         actions = []
         number_of_episodes = self.test_logger.count_episodes()
@@ -139,10 +149,13 @@ class TestAnalyse:
         fig, ax = plt.subplots(figsize=(40, 20))  # Increase figure size for better resolution
         tree.plot_tree(clf, ax=ax, filled=True, fontsize=10)
         plt.title('State-Action Behavior Tree')
-        plt.savefig('state_action_behaviour_high_res.png', dpi=300)  # Save with higher DPI for better resolution
+        if filepath == None:
+            plt.savefig('state_action_behaviour_high_res.png', dpi=300)  # Save with higher DPI for better resolution
+        else:
+            plt.savefig(filepath, dpi=300)
         plt.clf()
 
-    def plot_state_reward_map(self):
+    def plot_state_reward_map(self, filepath=None):
         states = []
         rewards = []
         number_of_episodes = self.test_logger.count_episodes()
@@ -184,6 +197,10 @@ class TestAnalyse:
         axs.set_ylabel("Second Principal Component")
         plt.colorbar(sc, ax=axs)
 
+        if filepath == None:
+            plt.savefig('pca_tsne.png')
+        else:
+            plt.savefig(filepath)
 
-        plt.savefig('pca_tsne.png')
+        plt.clf()
 
