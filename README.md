@@ -198,3 +198,60 @@ The RL agent is trained to balance the pole on the cart with a specific environm
 
 ##### RL Retraining
 The Gimitest framework can be used to retrain the RL agent based on the test results by letting the RL agent train during the testing.
+
+
+### Debugging the RL algorithm and environment
+The Gimitest framework can be used to debug the RL algorithm and environment.
+The code can be found in `examples/custom_environment_and_configurator.py`.
+
+
+
+#### Component Throughput
+Component throughput refers to the rate at which different components of a RL system process data.
+Monitoring these metrics over time can also indicate the overall health and efficiency of the RL system. If throughput rates decay over time, it suggests that there is an accumulation of costly state somewhere in the system, signaling a need for debugging.
+
+The none learning RL agent also has a random `time.sleep` function at every time step.
+Via our component throughput testing, we can observe the influence of the sleep function (compare Figure 1 with Figure 2).
+
+![Average Time per Step](images/avg_time_per_step_reward_0.png)
+
+![Average Time per Step](images/avg_time_per_step_real_training.png)
+
+
+
+
+#### Episode Length Distribution
+Episode length distribution is a metric that captures the variation in the lengths of episodes during the training of an RL agent. This can be displayed as a histogram or summarized through statistical measures like minimum, maximum, mean, and standard deviation.
+This metric is crucial for diagnosing the behavior of both the RL environment and the agent. For example, if all episodes have a fixed length in an environment that should support variable-length episodes, it could indicate issues like a malfunctioning environment or a learning agent that is stuck in suboptimal behavior patterns.
+Monitoring this distribution can offer key insights into the agent's learning process and highlight potential areas that may require debugging or optimization.
+
+In our example, we train a RL agent to balance the pole on the cart while one RL agent's learning is disturbed by a bug in storing the experiments (first Figure) and a correctly learning RL agent (second Figure).
+
+![Number of States](images/number_of_states_reward_0.png)
+
+![Number of States](images/number_of_states_real_training.png)
+
+We observe that the learning RL agent's episode length increases over time and the RL agent is able to balance the pole on the cart for longer time periods.
+
+
+
+
+#### Relative Policy Entropy
+Relative policy entropy is a metric that measures the entropy of the policy network's outputs in relation to the maximum possible entropy. It provides insights into how deterministic or exploratory the agent's behavior is over time.
+
+Importance:
+Learning Progress: If the metric remains close to 1, it suggests that the agent is not learning an effective policy. This could imply issues with policy target computation, gradient backpropagation, or even the environment itself.
+
+Exploration vs Exploitation: If the metric drops to near zero, it indicates that the agent's policy has become too deterministic, neglecting exploration. This could be due to inadequate exploration mechanisms or disproportionately high rewards.
+
+Learning Stability: Oscillations in this metric could mean the learning rate is too high, while a permanent increase after an initial drop could indicate that the policy fell into a suboptimal behavior it's struggling to escape from.
+
+Understanding the relative policy entropy can help in fine-tuning the agent's learning process and debugging issues related to exploration and exploitation.
+
+In our example, we train a RL agent to balance the pole on the cart while one RL agent's learning is disturbed by a bug in storing the experiments (first Figure) and a correctly learning RL agent (second Figure).
+
+![Relative Policy Entropy](images/entropy_of_actions_reward_0.png)
+
+![Relative Policy Entropy](images/entropy_of_actions_real_training.png)
+
+A entropy close to one indicate more diverse set where multiple actions are equally represented. We observe that the entropy of the actions of the learning RL agent is close to one and more stable.

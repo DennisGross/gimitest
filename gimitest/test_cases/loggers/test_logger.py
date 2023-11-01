@@ -66,6 +66,12 @@ class TestLogger:
             return "Cannot calculate average for a list with less than 2 timestamps"
         
         return avg_diff_seconds
+
+    def store_own_episode(self, episode, meta_data):
+        """
+        Override this method to store the test result.
+        """
+        pass
     
 
     def store_episode(self, episode, meta_data):
@@ -87,6 +93,8 @@ class TestLogger:
         meta_data["entropy_of_actions"] = self.__calculate_entropy(self.collected_actions)
         # Number of unique actions
         meta_data["number_of_unique_actions"] = len(set(self.collected_actions))
+        # Number of states
+        meta_data["number_of_states"] = len(self.collected_actions)+1
         # Add average time difference
         meta_data["avg_time_per_step"] = self.__average_time_diff(self.times)
         path = os.path.join(episode_dir, "meta.json")
@@ -100,7 +108,13 @@ class TestLogger:
         # Reset times
         self.times = []
 
+    
 
+    def store_own_episode_step(self, episode, step, state, action,  next_state, reward, done, truncated, info, meta_data):
+        """
+        Override this method to store the test result.
+        """
+        pass
     
     def store_episode_step(self, episode, step, state, action,  next_state, reward, done, truncated, info, meta_data):
         """
