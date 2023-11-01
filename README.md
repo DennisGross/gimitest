@@ -217,6 +217,9 @@ Via our component throughput testing, we can observe the influence of the sleep 
 
 ![Average Time per Step](images/avg_time_per_step_real_training.png)
 
+In the logging process, it is important to clarify that the first half is dedicated to the training phase of the model. The second half, in contrast, involves the RL agent operating in an exploitation mode, with exploration mechanisms disabled.
+The aforementioned conditions are also applicable to the subsequent tests within this specific use case.
+
 
 
 
