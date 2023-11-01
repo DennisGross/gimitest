@@ -2,6 +2,12 @@ import pickle
 import json
 import os
 import shutil
+from collections import Counter
+import math
+from statistics import mean
+import time
+
+
 
 class TestLogger:
 
@@ -13,6 +19,8 @@ class TestLogger:
         """
         self.root_dir = root_dir
         self.collected_reward = 0
+        self.collected_actions = []
+        self.times = []
         
     
     def create_test_folder(self):
@@ -21,6 +29,44 @@ class TestLogger:
         """
         if not os.path.exists(self.root_dir):
             os.makedirs(self.root_dir)
+
+    def __calculate_entropy(self, values):
+        # Count the occurrences of each unique value in the list
+        value_counts = Counter(values)
+        
+        # Calculate the total number of values
+        total_values = len(values)
+        
+        # Initialize entropy to 0
+        entropy = 0.0
+        
+        # Calculate entropy
+        for count in value_counts.values():
+            # Calculate the probability of each unique value
+            probability = count / total_values
+            
+            # Add the entropy for this value to the total entropy
+            entropy -= probability * math.log2(probability)
+            
+        return entropy
+
+    def __average_time_diff(self, timestamps):        
+        # Initialize an empty list to store the differences
+        time_diffs = []
+        
+        # Loop through the sorted timestamps to calculate differences
+        for i in range(1, len(timestamps)):
+            time_diff = timestamps[i] - timestamps[i-1]
+            time_diffs.append(time_diff)
+            
+        # Calculate the average difference in seconds
+        if time_diffs:
+            avg_diff_seconds = mean(time_diffs)
+        else:
+            return "Cannot calculate average for a list with less than 2 timestamps"
+        
+        return avg_diff_seconds
+    
 
     def store_episode(self, episode, meta_data):
         """
@@ -36,15 +82,24 @@ class TestLogger:
             os.makedirs(episode_dir)
 
         # Add collected reward
-        print("Collected reward: ", self.collected_reward)
-        print("Meta data: ", meta_data)
         meta_data["collected_reward"] = self.collected_reward
+        # Add entropy of actions
+        meta_data["entropy_of_actions"] = self.__calculate_entropy(self.collected_actions)
+        # Number of unique actions
+        meta_data["number_of_unique_actions"] = len(set(self.collected_actions))
+        # Add average time difference
+        meta_data["avg_time_per_step"] = self.__average_time_diff(self.times)
         path = os.path.join(episode_dir, "meta.json")
         with open(path, 'w') as f:
             json.dump(meta_data, f)
         
         # Reset collected reward
         self.collected_reward = 0
+        # Reset collected actions
+        self.collected_actions = []
+        # Reset times
+        self.times = []
+
 
     
     def store_episode_step(self, episode, step, state, action,  next_state, reward, done, truncated, info, meta_data):
@@ -62,12 +117,17 @@ class TestLogger:
             info (dict): The info dictionary returned by the original step function.
             meta_data (dict): The test case meta data for step.
         """
+        # Get current time stemp as int
+        current_time = time.time()
+        self.times.append(current_time)
+
         episode_dir = self.create_episode_path(episode)
         if not os.path.exists(episode_dir):
             os.makedirs(episode_dir)
         path = self.create_file_path(episode, step)
         with open(path, 'wb') as f:
             pickle.dump([state, action, reward, next_state, done, truncated, info, meta_data], f)
+        self.collected_actions.append(action)
         self.collected_reward += reward
 
     def create_episode_path(self, episode):

@@ -136,7 +136,7 @@ The `TestCase` send first the message and receives the corresponding message fro
 This allows us to control the configuration of the environment based on the test case execution.
 
 
-## Use Cases
+## 🏭 Use Cases
 The following use cases demonstrate the capabilities of the Gimitest framework.
 
 
