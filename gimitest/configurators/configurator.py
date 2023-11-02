@@ -33,7 +33,7 @@ class Configurator():
         parameters (dict): Dictionary of custom parameters for the configurator. Expected to contain a key "state_variable_name".
     """
 
-    def __init__(self, parameters):
+    def __init__(self, parameters={}):
         """Initializes the Configurator object with given parameters.
 
         Args:
@@ -167,7 +167,7 @@ class Configurator():
             None: Placeholder for child classes to implement custom configuration logic.
         """
         #print("I am the configure method of the Configurator class (modify me).")
-        return self.get_attribute(env, self.parameters["state_variable_name"])
+        return None
 
     def active_configuration_pre_step(self, env):
         """Method for configuring the environment before each step
