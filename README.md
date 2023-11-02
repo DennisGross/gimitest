@@ -4,7 +4,6 @@ It offers predefined `TestCase` classes along with the capability to develop cus
 The availability of both standard and customizable `Configurator` classes further enables the sampling of RL agent behavior under varied initial states and environment parameters.
 
 
-
 ## 🚀 Getting Started
 Install package via:
 `pip install git+https://github.com/DennisGross/gimitest.git`
@@ -136,7 +135,7 @@ The `TestCase` send first the message and receives the corresponding message fro
 This allows us to control the configuration of the environment based on the test case execution.
 
 
-## 🏭 Use Cases
+## 🏭 Use Cases and Examples
 The following use cases demonstrate the capabilities of the Gimitest framework.
 
 
@@ -258,3 +257,14 @@ In our example, we train a RL agent to balance the pole on the cart while one RL
 ![Relative Policy Entropy](images/entropy_of_actions_real_training.png)
 
 A entropy close to one indicate more diverse set where multiple actions are equally represented. We observe that the entropy of the actions of the learning RL agent is close to one and more stable.
+
+
+### Third-party Support shown on the Flappy Bird Environment
+Gimitest is compatible with custom environments and already existing third-party environments.
+We show this by using the Flappy Bird environment from the [FlapPyBird-Repository](https://github.com/markub3327/flappy-bird-gymnasium), a officially supported third-party environment from Gymnasium.
+
+The full code can be found in `examples/flappy_bird.py`.
+
+The requirements is to install the environment via `pip install flappy-bird-gymnasium`.
+
+In this code, we show how to insert sensor noise in the agent's observation and how to log RL system relevant data.
