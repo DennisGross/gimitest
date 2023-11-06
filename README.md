@@ -195,6 +195,12 @@ In the following figure, we can see the reward of the RL agent under different s
 The RL agent is trained to balance the pole on the cart with a specific environment. However, the RL agent may not be able to balance the pole if the environment changes abruptly. The Gimitest framework can be used to test the RL agent's performance under different environment changes.
 
 
+##### Adaptive stress testing the RL agent
+The Gimitest framework can be used to test the RL agent's performance under different environment changes.
+Change the x-position at every possible time step, let the RL agent's performance drop to around 50 reward points.
+
+
+
 ##### RL Retraining
 The Gimitest framework can be used to retrain the RL agent based on the test results by letting the RL agent train during the testing.
 

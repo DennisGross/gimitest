@@ -64,7 +64,9 @@ class GymDecorator:
             original_next_state, original_reward, original_terminated, original_truncated, original_info = original_step_function(*action_args, **kwargs)
             if configurator != None:
                 # Active Testing with old test messages
-                configurator.active_configuration_post_step(env)
+                tmp_next_state = configurator.active_configuration_post_step(env)
+                if tmp_next_state is not None:
+                    original_next_state = tmp_next_state
             
             # Handle test cases if any
             if test_cases is None:

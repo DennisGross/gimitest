@@ -180,7 +180,7 @@ class Configurator():
             None: Placeholder for child classes to implement custom configuration logic.
         """
         #print("I am the active_configuration method of the Configurator class (modify me).")
-        return {}
+        return None
 
     def active_configuration_post_step(self, env):
         """Method for configuring the environment after each step
@@ -193,7 +193,7 @@ class Configurator():
             None: Placeholder for child classes to implement custom configuration logic.
         """
         #print("I am the active_configuration method of the Configurator class (modify me).")
-        return {}
+        return None
 
 
     def create_pre_reset_message(self):

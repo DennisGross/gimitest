@@ -22,7 +22,7 @@ number_of_neurons = [256, 256]
 agent = DQNAgent(state_dimension, number_of_neurons, number_of_actions)
 
 
-def evaluate_agent(agent, env, episodes=10):
+def evaluate_agent(agent, env, episodes=1000):
     rewards = []
     for _ in range(episodes):
         state, info = env.reset()
@@ -39,7 +39,8 @@ def evaluate_agent(agent, env, episodes=10):
 
 best_avg_reward = -np.inf  # Initialize the best average reward to negative infinity
 n_episodes = 1000  # Number of training episodes
-evaluate_interval = 1000  # Evaluate the agent every 100 episodes
+evaluate_interval = n_episodes  # Evaluate the agent every 100 episodes
+EVALS = 100
 save_path = "best_agent"  # Folder where to save the best agent
 
 for episode in range(1, n_episodes + 1):
@@ -59,14 +60,100 @@ for episode in range(1, n_episodes + 1):
 
     # Evaluate the agent and save the best one
     if episode % evaluate_interval == 0:
-        avg_reward = evaluate_agent(agent, env, episodes=100)
+        avg_reward = evaluate_agent(agent, env, episodes=EVALS)
         print(f"Avg Reward over 100 evaluation episodes: {avg_reward}")
 
         if avg_reward > best_avg_reward:
             best_avg_reward = avg_reward
             print("New best agent found. Saving...")
             agent.save(save_path)
+
+
+# Noisy Sensors
+class TestNoisySensors(TestCase):
+
+    def __init__(self, parameters={}):
+        super(TestNoisySensors, self).__init__(parameters)
+
+    def step_execute(self, env, original_state, action_args, original_next_state, original_reward, original_terminated, original_truncated, original_info):
+        perturbation = np.random.normal(-0.1, 0.1, original_next_state.shape)
+        # Add noise to the state
+        original_next_state += perturbation
+        return original_state, action_args, original_next_state, original_reward, original_terminated, original_truncated, original_info
+
+
+m_logger = TestLogger("cartpole_noisy_sensors")
+m_test_case = TestNoisySensors()
+m_test_case = TestCaseDecorator.decorate_test_case_with_test_logger(m_test_case, m_logger)
+test_cases = [m_test_case]
+# Decorate gym
+env = gym.make('CartPole-v1')
+env = GymDecorator.decorate_gym(env, test_cases, None)
+evaluate_agent(agent, env, episodes=EVALS)
+
+
+# Analyze the test logs
+m_analytics = TestAnalyse(m_logger)
+m_analytics.plot_key_value_over_episodes("collected_reward", filepath="cartpole_noisy_sensors_reward.png")
+m_analytics.plot_state_action_behaviour(filepath="cartpole_noisy_sensors_state_action_behaviour.png")
+# Delete the test logs
+m_logger.delete_test_folder()
+
            
+
+# Adaptive Stress Testing
+# Test the RL agent under different initial states
+class AdaptiveStressTesting(Configurator):
+
+    def __init__(self, parameters={}):
+        super(AdaptiveStressTesting, self).__init__(parameters)
+        self.init_x_coordinates = []
+
+
+    def active_configuration_post_step(self, env):
+        state_variable_name = self.parameters["state_variable_name"]
+        current_state = list(self.get_attribute(env, state_variable_name))
+        # Get random x-coordinate between -1 and 1
+        current_state[0] = np.random.uniform(-4.8, 4.8)
+        self.init_x_coordinates.append(str(current_state[0]))
+        # Modify position
+        current_state = tuple(current_state)
+        self.set_attribute(env, state_variable_name, current_state)
+        self.init_state = current_state
+        return np.array([self.get_attribute(env, state_variable_name)])
+
+
+    def create_post_reset_message(self):
+        """Method for getting messages or information to be passed along.
+        
+        Returns:
+            dict: The message to be passed along.
+        """
+        #print("I am the get_message method of the TestCase class (modify me).")
+        return {"x_coordinates": str(self.init_x_coordinates)}
+
+    
+
+
+m_logger = TestLogger("cartpole_active_stress_testing")
+m_test_case = TestCase()
+m_test_case = TestCaseDecorator.decorate_test_case_with_test_logger(m_test_case, m_logger)
+test_cases = [m_test_case]
+# Configurator
+configurator = AdaptiveStressTesting({"state_variable_name": "state"})
+# Decorate gym
+env = gym.make('CartPole-v1')
+env = GymDecorator.decorate_gym(env, test_cases, configurator)
+evaluate_agent(agent, env, episodes=EVALS)
+
+# Analyze the test logs
+m_analytics = TestAnalyse(m_logger)
+m_analytics.plot_key_value_over_episodes("collected_reward", "cartpole_active_stress_testing.png")
+#m_analytics.plot_key1_key2_and_value("pole_mass", "pole_length", "collected_reward", xlabel="masscart", ylabel="length", filepath="cartpole_mass_length_reward.png")
+m_analytics.plot_action_distribution(filepath="cartpole_active_stress_testing_action_distribution.png")
+# Delete the test logs
+#m_logger.delete_test_folder()
+
 
 
 # Test the RL agent under different initial states
@@ -77,9 +164,10 @@ class RandomStartPosition(Configurator):
 
     def configuration_post_reset(self, env, test_case_messages):
         state_variable_name = self.parameters["state_variable_name"]
-        current_state = self.get_attribute(env, state_variable_name)
+        current_state = list(self.get_attribute(env, state_variable_name))
         # Get random x-coordinate between -1 and 1
         current_state[0] = np.random.uniform(-4.8, 4.8)
+        current_state = tuple(current_state)
         # Modify position
         self.set_attribute(env, state_variable_name, current_state)
         self.init_state = current_state
@@ -94,8 +182,6 @@ class RandomStartPosition(Configurator):
         #print("I am the get_message method of the TestCase class (modify me).")
         return {"init_state": str(self.init_state)}
 
-    
-
 
 m_logger = TestLogger("cartpole_different_init_states")
 m_test_case = TestCase()
@@ -104,8 +190,9 @@ test_cases = [m_test_case]
 # Configurator
 configurator = RandomStartPosition({"state_variable_name": "state"})
 # Decorate gym
+env = gym.make('CartPole-v1')
 env = GymDecorator.decorate_gym(env, test_cases, configurator)
-evaluate_agent(agent, env, episodes=1000)
+evaluate_agent(agent, env, episodes=EVALS)
 
 
 # Analyze the test logs
@@ -115,6 +202,12 @@ m_analytics.plot_key_value_over_episodes("collected_reward", "cartpole_different
 m_analytics.plot_action_distribution(filepath="cartpole_action_distribution.png")
 # Delete the test logs
 m_logger.delete_test_folder()
+
+
+
+
+
+
 
 
 # Test the RL agent under different masses and lengths
@@ -150,8 +243,9 @@ test_cases = [m_test_case]
 # Configurator
 m_masslengthconfigurator = MassLengthConfiguration()
 # Decorate gym
+env = gym.make('CartPole-v1')
 env = GymDecorator.decorate_gym(env, test_cases, m_masslengthconfigurator)
-evaluate_agent(agent, env, episodes=1000)
+evaluate_agent(agent, env, episodes=EVALS)
 
 # Analyze the test logs
 m_analytics = TestAnalyse(m_logger)
@@ -161,32 +255,4 @@ m_analytics.plot_key1_key2_and_value("pole_mass", "pole_length", "collected_rewa
 # Delete the test logs
 m_logger.delete_test_folder()
 
-# Noisy Sensors
-class TestNoisySensors(TestCase):
-
-    def __init__(self, parameters={}):
-        super(TestNoisySensors, self).__init__(parameters)
-
-    def step_execute(self, env, original_state, action_args, original_next_state, original_reward, original_terminated, original_truncated, original_info):
-        perturbation = np.random.normal(-0.1, 0.1, original_next_state.shape)
-        # Add noise to the state
-        original_next_state += perturbation
-        return original_state, action_args, original_next_state, original_reward, original_terminated, original_truncated, original_info
-
-
-m_logger = TestLogger("cartpole_noisy_sensors")
-m_test_case = TestNoisySensors()
-m_test_case = TestCaseDecorator.decorate_test_case_with_test_logger(m_test_case, m_logger)
-test_cases = [m_test_case]
-# Decorate gym
-env = GymDecorator.decorate_gym(env, test_cases, None)
-evaluate_agent(agent, env, episodes=1000)
-
-
-# Analyze the test logs
-m_analytics = TestAnalyse(m_logger)
-m_analytics.plot_key_value_over_episodes("collected_reward", filepath="cartpole_noisy_sensors_reward.png")
-m_analytics.plot_state_action_behaviour(filepath="cartpole_noisy_sensors_state_action_behaviour.png")
-# Delete the test logs
-m_logger.delete_test_folder()
 
