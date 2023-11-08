@@ -275,3 +275,9 @@ The full code can be found in `examples/flappy_bird.py`.
 The requirements is to install the environment via `pip install flappy-bird-gymnasium`.
 
 In this code, we show how to insert sensor noise in the agent's observation and how to log RL system relevant data.
+
+
+### Mult-Agent RL Support
+In the case of turn-based MARL and parallel MARL, we can use the decorate function the same way.
+See `examples/pettingzoo_tic_tac_toe.py` (turn-based) and `examples/parallel_petting_zoo.py` (parallel).
+
