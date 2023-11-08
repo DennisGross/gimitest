@@ -140,7 +140,17 @@ class TestLogger:
             os.makedirs(episode_dir)
         path = self.create_file_path(episode, step)
         with open(path, 'wb') as f:
-            pickle.dump([state, action, reward, next_state, done, truncated, info, meta_data, agent_selection], f)
+            data = {}
+            data["state"] = state
+            data["action"] = action
+            data["reward"] = reward
+            data["next_state"] = next_state
+            data["done"] = done
+            data["truncated"] = truncated
+            data["info"] = info
+            data["meta_data"] = meta_data
+            data["agent_selection"] = agent_selection
+            pickle.dump(data, f)
         self.collected_actions.append(action)
         self.collected_reward += reward
 

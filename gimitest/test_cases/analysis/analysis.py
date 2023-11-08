@@ -94,7 +94,7 @@ class TestAnalyse:
             try:
                 number_of_steps = self.test_logger.count_episode_steps(episode)
                 for step in range(0, number_of_steps):
-                    action = str(self.test_logger.load_episode_step(episode, step)[1])
+                    action = str(self.test_logger.load_episode_step(episode, step)["action"])
                     actions.append(action)
                 
             except Exception as e:
@@ -125,8 +125,8 @@ class TestAnalyse:
             try:
                 number_of_steps = self.test_logger.count_episode_steps(episode)
                 for step in range(0, number_of_steps):
-                    state = self.test_logger.load_episode_step(episode, step)[0]
-                    action = int(str(self.test_logger.load_episode_step(episode, step)[1]).replace(",", "").replace("(", "").replace(")", ""))
+                    state = self.test_logger.load_episode_step(episode, step)["state"]
+                    action = int(str(self.test_logger.load_episode_step(episode, step)["action"]).replace(",", "").replace("(", "").replace(")", ""))
                     states.append(state)
                     actions.append(action)
             except Exception as e:
@@ -163,8 +163,8 @@ class TestAnalyse:
             try:
                 number_of_steps = self.test_logger.count_episode_steps(episode)
                 for step in range(0, number_of_steps):
-                    state = self.test_logger.load_episode_step(episode, step)[0]
-                    reward = self.test_logger.load_episode_step(episode, step)[2]
+                    state = self.test_logger.load_episode_step(episode, step)["state"]
+                    reward = self.test_logger.load_episode_step(episode, step)["reward"]
                     states.append(state)
                     rewards.append(reward)
             except Exception as e:
