@@ -1,7 +1,8 @@
 # Gimitest
-The _Gimitest framework_ enhances the [Farama Gymnasium](https://gymnasium.farama.org/index.html) by modifying its `reset(...)` and `step(...)` methods, thereby simplifying the testing process of Reinforcement Learning (RL) agents at specific time steps and episode terminations, whether in training or testing phases.
+The _Gimitest framework_ enhances the [Farama Gymnasium](https://gymnasium.farama.org/index.html) and [PettingZoo](https://pettingzoo.farama.org/content/basic_usage/) by modifying its `reset(...)` and `step(...)` methods, thereby simplifying the testing process of Reinforcement Learning (RL) agents at specific time steps and episode terminations, whether in training or testing phases.
 It offers predefined `TestCase` classes along with the capability to develop custom ones, thereby providing flexibility in the testing regime.
 The availability of both standard and customizable `Configurator` classes further enables the sampling of RL agent behavior under varied initial states and environment parameters.
+Via so-called `TestLogger` classes, it is possible to log the RL system relevant data.
 
 
 ## 🚀 Getting Started
