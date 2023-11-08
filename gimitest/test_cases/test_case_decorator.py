@@ -30,17 +30,24 @@ class TestCaseDecorator:
         def wrapper(*action_args, **kwargs):
             current_episode = test_case.episode
             current_step = test_case.steps
+            # Try to get agent selection in turn-based games from parameters
+            try:
+                agent_selection = action_args[-1]   # Last argument is agent_selection
+            except:
+                # If not possible, set to None
+                agent_selection = None
+
             # Call the original step function
             original_state, action_args, original_next_state, original_reward, original_terminated, original_truncated, original_info = original_step_execute(*action_args, **kwargs)
             # Store the step
-            test_logger.store_own_episode_step(current_episode, current_step, original_state,  action_args, original_next_state, original_reward, original_terminated, original_truncated, original_info, test_case.meta_data)
-            test_logger.store_episode_step(current_episode, current_step, original_state,  action_args, original_next_state, original_reward, original_terminated, original_truncated, original_info, test_case.meta_data)
+            test_logger.store_own_episode_step(current_episode, current_step, original_state,  action_args, original_next_state, original_reward, original_terminated, original_truncated, original_info, test_case.meta_data, agent_selection)
+            test_logger.store_episode_step(current_episode, current_step, original_state,  action_args, original_next_state, original_reward, original_terminated, original_truncated, original_info, test_case.meta_data, agent_selection)
             # Increment the step
             test_case.step_increment()
             if original_terminated or original_truncated:
                 # Store the episode
-                test_logger.store_own_episode(current_episode, test_case.meta_data)
-                test_logger.store_episode(current_episode, test_case.meta_data)
+                test_logger.store_own_episode(current_episode, test_case.meta_data, agent_selection)
+                test_logger.store_episode(current_episode, test_case.meta_data, agent_selection)
             return original_state, action_args, original_next_state, original_reward, original_terminated, original_truncated, original_info
 
 

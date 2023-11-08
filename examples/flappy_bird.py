@@ -18,7 +18,7 @@ class TestNoisySensors(TestCase):
     def __init__(self, parameters={}):
         super(TestNoisySensors, self).__init__(parameters)
 
-    def step_execute(self, env, original_state, action_args, original_next_state, original_reward, original_terminated, original_truncated, original_info):
+    def step_execute(self, env, original_state, action_args, original_next_state, original_reward, original_terminated, original_truncated, original_info, agent_selection):
         perturbation = np.random.normal(-0.1, 0.1, original_next_state.shape)
         # Add noise to the state
         original_next_state += perturbation

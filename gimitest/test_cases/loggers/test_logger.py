@@ -67,14 +67,14 @@ class TestLogger:
         
         return avg_diff_seconds
 
-    def store_own_episode(self, episode, meta_data):
+    def store_own_episode(self, episode, meta_data, agent_selection):
         """
         Override this method to store the test result.
         """
         pass
     
 
-    def store_episode(self, episode, meta_data):
+    def store_episode(self, episode, meta_data, agent_selection):
         """
         Method for storing the test result.
 
@@ -110,13 +110,13 @@ class TestLogger:
 
     
 
-    def store_own_episode_step(self, episode, step, state, action,  next_state, reward, done, truncated, info, meta_data):
+    def store_own_episode_step(self, episode, step, state, action,  next_state, reward, done, truncated, info, meta_data, agent_selection):
         """
         Override this method to store the test result.
         """
         pass
     
-    def store_episode_step(self, episode, step, state, action,  next_state, reward, done, truncated, info, meta_data):
+    def store_episode_step(self, episode, step, state, action,  next_state, reward, done, truncated, info, meta_data, agent_selection):
         """
         Method for storing the test result.
 
@@ -140,7 +140,7 @@ class TestLogger:
             os.makedirs(episode_dir)
         path = self.create_file_path(episode, step)
         with open(path, 'wb') as f:
-            pickle.dump([state, action, reward, next_state, done, truncated, info, meta_data], f)
+            pickle.dump([state, action, reward, next_state, done, truncated, info, meta_data, agent_selection], f)
         self.collected_actions.append(action)
         self.collected_reward += reward
 

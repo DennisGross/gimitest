@@ -57,7 +57,7 @@ class ReachabilityTestCase(TestCase):
     def __init__(self, parameters={}):
         super(ReachabilityTestCase, self).__init__(parameters)
 
-    def step_execute(self, env, original_state, action_args, original_next_state, original_reward, original_terminated, original_truncated, original_info):
+    def step_execute(self, env, original_state, action_args, original_next_state, original_reward, original_terminated, original_truncated, original_info, agent_selection):
         if  state[0] == self.parameters["goal"] or original_next_state[0] == self.parameters["goal"]:
             print("Goal reached!")
         return original_state, action_args, original_next_state, original_reward, original_terminated, original_truncated, original_info

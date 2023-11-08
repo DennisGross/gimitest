@@ -38,9 +38,9 @@ def evaluate_agent(agent, env, episodes=1000):
     return np.mean(rewards)
 
 best_avg_reward = -np.inf  # Initialize the best average reward to negative infinity
-n_episodes = 1000  # Number of training episodes
+n_episodes = 10  # Number of training episodes
 evaluate_interval = n_episodes  # Evaluate the agent every 100 episodes
-EVALS = 100
+EVALS = 10
 save_path = "best_agent"  # Folder where to save the best agent
 
 for episode in range(1, n_episodes + 1):
@@ -75,7 +75,7 @@ class TestNoisySensors(TestCase):
     def __init__(self, parameters={}):
         super(TestNoisySensors, self).__init__(parameters)
 
-    def step_execute(self, env, original_state, action_args, original_next_state, original_reward, original_terminated, original_truncated, original_info):
+    def step_execute(self, env, original_state, action_args, original_next_state, original_reward, original_terminated, original_truncated, original_info, agent_selection):
         perturbation = np.random.normal(-0.1, 0.1, original_next_state.shape)
         # Add noise to the state
         original_next_state += perturbation

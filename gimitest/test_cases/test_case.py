@@ -42,7 +42,7 @@ class TestCase():
         self.episode = 0
         self.steps = 0
 
-    def step_execute(self, env, original_state, action_args, original_next_state, original_reward, original_terminated, original_truncated, original_info):
+    def step_execute(self, env, original_state, action_args, original_next_state, original_reward, original_terminated, original_truncated, original_info, agent_selection):
         """Method to be executed during each step of the environment.
         
         Args:

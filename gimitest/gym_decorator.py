@@ -60,8 +60,20 @@ class GymDecorator:
             if configurator != None:
                 # Active Testing with old test messages
                 configurator.active_configuration_pre_step(env)
+
+            try:
+                # Try to get agent selection in turn-based games
+                agent_selection = env.agent_selection
+            except:
+                # If not possible, set to None
+                agent_selection = None
+
             # Call the original step function
-            original_next_state, original_reward, original_terminated, original_truncated, original_info = original_step_function(*action_args, **kwargs)
+            if agent_selection is None:
+                original_next_state, original_reward, original_terminated, original_truncated, original_info = original_step_function(*action_args, **kwargs)
+            else:
+                original_step_function(*action_args, **kwargs)
+                original_next_state, original_reward, original_terminated, original_truncated, original_info = env.last()
             if configurator != None:
                 # Active Testing with old test messages
                 tmp_next_state = configurator.active_configuration_post_step(env)
@@ -79,9 +91,10 @@ class GymDecorator:
                 tmp_truncated = original_truncated
                 tmp_info = original_info
                 for test_case in test_cases:
-                    tmp_state, tmp_action_args, tmp_next_state, tmp_reward, tmp_terminated, tmp_truncated, tmp_info = test_case.step_execute(env, env.tmp_storage_of_state, action_args, original_next_state, original_reward, original_terminated, original_truncated, original_info)
+                    tmp_state, tmp_action_args, tmp_next_state, tmp_reward, tmp_terminated, tmp_truncated, tmp_info = test_case.step_execute(env, env.tmp_storage_of_state, action_args, original_next_state, original_reward, original_terminated, original_truncated, tmp_info, agent_selection)
                 env.tmp_storage_of_state = original_next_state
                 return tmp_next_state, tmp_reward, tmp_terminated, tmp_truncated, tmp_info
+        
         return wrapper
 
     @staticmethod
@@ -122,7 +135,13 @@ class GymDecorator:
                         test_case.get_pre_reset_message(configurator.create_pre_reset_message())
 
             # Call the original reset function
-            next_state, info = original_reset_function(*args, **kwargs)
+            try:
+                next_state, info = original_reset_function(*args, **kwargs)
+            except:
+                original_reset_function(*args, **kwargs)
+                next_state, reward, done, truncated, info = env.last()
+
+            
             
             env.tmp_storage_of_state = next_state
 
@@ -137,7 +156,7 @@ class GymDecorator:
                         test_case.get_message(configurator.create_post_reset_message())
 
             
-
+            
             return env.tmp_storage_of_state, info
         return wrapper
 
