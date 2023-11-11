@@ -47,54 +47,49 @@ Decorator design pattern is used to modify the functionality of an object at run
 
 We use the decorator design pattern to extend the `reset(...)` and `step(...)` methods of the Gym environment, allowing for testing at specific time intervals and episode terminations.
 
-In the case of `reset(...)`, the decorator checks the current state of the environment and compares it to the test cases. It then executes the basic functionality of the `reset(...)` method.
-After that, it executes the configurator to either modify the initial state or modify any other parameter (such as the gravity of the environment) and returns the modified state with the corresponding information.
-The TestCases can inform the configurator via messages about their execution and guide the configuration.
-The following code snippet shows the implementation of the `reset(...)` decorator.
-It first executes the test cases and stores their messages.
-Then, it calls the original `reset(...)` function and stores the next state.
-Finally, it applies the configurator if set and returns the modified state with the corresponding information.
+`reset(...)`
+At the end of an episode, each test case in test_cases is executed. This allows for the collection of data or the performance of specific checks at the episode's conclusion.
+Messages from test cases are compiled and can be used by the configurator.
+Before the actual reset, the configurator's configuration_pre_reset method is called. This allows for pre-reset adjustments based on the test case outcomes.
+If provided, the configurator also processes the environment and test case messages post-reset to finalize the initial state setup.
+The original reset function of the gym environment is called to reset the state.
+The configurator might further adjust the state after the reset, based on the test case outcomes or its own internal logic.
+
+Overview of the decorated reset function execution:
 ```
-def wrapper(*args, **kwargs):
-    test_case_messages = []
-    # Handle test cases if any
-    if test_cases is not None:
-    for test_case in test_cases:
-        test_case.episode_execute()
-        test_case_messages.append(test_case.get_message())
-        test_case.episode_store()
-
-    # Call the original reset function
-    next_state, info = original_reset_function(*args, **kwargs)
-    env.tmp_storage_of_state = next_state
-
-    # Apply configurator if set
-    if configurator is not None:
-        env.tmp_storage_of_state = configurator.configure(env, test_case_messages)
-    return env.tmp_storage_of_state, info
+1. Test Case Execution
+2. Configurator Integration
+3. State Reset
+4. Post-Reset Configuration
 ```
 
-In the case of `step(...)`, the decorator checks the current state of the environment and compares it to the test cases. It then executes the basic functionality of the `step(...)` method.
-The last element in the test_cases list can be used to modify the observed state for the RL agent. This can be used to test the effect of sensor noise on the RL agent's performance.
+`step(...)` The step function decorator in the GymDecorator class is designed to enhance the behavior of the step function in a gym environment. This enhancement allows for the integration of custom configurations and test cases at each step of the environment's episode. Here's an outline of its functionality:
 
+If a configurator object is provided, the decorator calls the configurator's active_configuration_pre_step method before executing the original step function. This allows for any necessary configurations or adjustments to be made based on the current state of the environment before taking the next step.
+
+
+The original step function of the gym environment is called with the provided action arguments. This step progresses the environment to its next state and returns the standard outputs: the next state, reward, whether the episode has terminated or truncated, and additional info.
+
+
+After executing the original step function, if a configurator object is provided, the decorator calls the configurator's active_configuration_post_step method. This allows for any post-step adjustments or configurations. For instance, the configurator might modify the next state returned by the original step function.
+
+
+If any test cases are provided, they are executed after the original step function. These test cases can inspect or modify the outcomes of the step (like the next state, reward, etc.). This is particularly useful for testing specific scenarios or conditions within the environment.
+
+
+The decorator then returns the potentially modified step outcomes: the next state, reward, termination status, truncation status, and additional info. These outcomes reflect any changes or adjustments made by the configurator and test cases.
+
+
+The decorator also stores the state of the environment after each step. This stored state can be used by test cases in subsequent steps or for other analysis purposes.
+
+Overview of the decorated step function execution:
 ```
-def wrapper(*action_args, **kwargs):
-    # Call the original step function
-    original_next_state, original_reward, original_done, original_truncated, original_info = 
-    original_step_function(*action_args, **kwargs)
-            
-    # Handle test cases if any
-    if test_cases is None:
-        env.tmp_storage_of_state = original_next_state
-        return original_next_state, original_reward, original_done, original_truncated, original_info
-    else:
-        for test_case in test_cases:
-            tmp_next_state, tmp_reward, tmp_done, tmp_truncated, tmp_info = test_case.step_execute(env, 
-            env.tmp_storage_of_state, action_args, original_reward, original_done, original_truncated,
-            original_info, None)
-            test_case.step_store()
-        env.tmp_storage_of_state = original_next_state
-        return tmp_next_state, tmp_reward, tmp_done, tmp_truncated, tmp_info
+1. Integration of Configurator (Pre-Step)
+2. Executing the Original step Function
+3. Integration of Configurator (Post-Step)
+4. Handling Test Cases
+5. Return Modified Step Outcomes
+6. State Storage for Test Cases
 ```
 
 Additionally to to the gymnasium decorator, we use a test case decorator to extend the TestCase methods with the capability to store and load data via a logger.
@@ -106,7 +101,8 @@ The `GymDecorator` uses the `Configurator` and/or `TestCase` to extend the funct
 ![Decoration Pattern](images/decoration_pattern.png)
 
 ### 👮🏼‍♂️ TestCase Class
-The `TestCase` class serves as a base class for creating test cases specifically tailored for gym environments. It contains a single attribute, parameters, which is a dictionary meant for holding custom parameters for individual test cases. The class has various methods that can be overridden to provide custom behavior during testing. The `__init__(...)` method initializes the class instance with these custom parameters. The `step_execute(...)` method is designed to be called at each step in the gym environment, taking various arguments like current state, action arguments, and original outcomes like next state and reward. It returns potentially modified versions of these outcomes. The `step_store(...)` and `step_load(...)` methods are placeholders for storing and loading data relevant to each step, respectively. Similarly, `episode_execute(...)`, `episode_store(...)`, and `episode_load(...)` methods serve as placeholders for operations at the start and end of each episode. Lastly, the `get_message(...)` method is designed to return messages or information as a dictionary to inform the configurator about the execution of the test case.
+The `TestCase` class serves as a base class for creating test cases specifically tailored for gym environments. It contains a single attribute, parameters, which is a dictionary meant for holding custom parameters for individual test cases. The class has various methods that can be overridden to provide custom behavior during testing.
+For instance, the `__init__(...)` method initializes the class instance with these custom parameters. The `step_execute(...)` method is designed to be called at each step in the gym environment, taking various arguments like current state, action arguments, and original outcomes like next state and reward. It returns potentially modified versions of these outcomes. The `step_store(...)` and `step_load(...)` methods are placeholders for storing and loading data relevant to each step, respectively. Similarly, `episode_execute(...)`, `episode_store(...)`, and `episode_load(...)` methods serve as placeholders for operations at the start and end of each episode. Lastly, the `get_message(...)` method is designed to return messages or information as a dictionary to inform the configurator about the execution of the test case. See the source code for more details on the methods and their arguments.
 
 
 #### 📝 TestLogger Class
@@ -121,10 +117,13 @@ It allows to aggregate the test results over multiple episodes of a specific tes
 
 ### 👨🏼‍🔧 Configurator Class
 The `Configurator` class is a foundational class intended to configure gym environments.
-It has a single attribute, parameters, a dictionary expected to contain custom configuration parameters including a key for "state_variable_name" which indicates the name of the state variable in the gym environment. The `__init__(...)` method initializes the object with given parameters, expected to contain a key for "state_variable_name".
+It has a single attribute, parameters, a dictionary expected to contain custom configuration parameters including a key for "state_variable_name" which indicates the name of the state variable in the gym environment.
+The class has various methods that can be overridden to provide custom behavior during testing.
+For instance, the `__init__(...)` method initializes the object with given parameters, expected to contain a key for "state_variable_name".
 The `set_attribute(...)` method alters the attribute of the gym environment based on the parameters.
 the `get_attribute(...)` method etrieves the current state of the gym environment.
-The `configure(...)` method is intended for overriding to provide custom environment configuration logic.
+The `configure(...)` method is intended for overriding to provide custom environment configuration logic. 
+See the source code for more details on the methods and their arguments.
 
 
 ### 📨 Communication Between TestCase and Configurator
