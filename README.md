@@ -150,7 +150,7 @@ In this scenario, a Reinforcement Learning (RL) agent is tasked with controlling
 
 #### RL Training
 The training phase involves optimizing the deep RL agent's policy to maximize the accumulated reward over time. This serves as an indicator of how well the agent has learned to manage the control problem of balancing the pole on the moving cart. 
-The average reward over 100 evaluation episodes for the trained RL agent is 282.53.
+The average reward over 100 evaluation episodes for the trained RL agent is 306.34.
 
 #### RL Testing
 The Gimitest framework can be used to test the RL agent in the following scenarios:

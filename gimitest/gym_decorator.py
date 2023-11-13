@@ -71,7 +71,7 @@ class GymDecorator:
             # Makes it possible to test, if another action was chosen
             if test_cases is not None:
                 for test_case in test_cases:
-                    action = test_case.pre_step_execute(env, agent_selection)
+                    action = test_case.pre_step_execute(env, agent_selection, action_args[0])
                     if action is not None:
                         action_args[0] = action
 
@@ -152,7 +152,7 @@ class GymDecorator:
             if test_cases is not None:
                 for test_case in test_cases:
                     tmp_next_state = test_case.post_episode_execute()
-                    if action is not None:
+                    if tmp_next_state is not None:
                         next_state = tmp_next_state
             
             env.tmp_storage_of_state = next_state

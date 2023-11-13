@@ -43,7 +43,7 @@ class TestCase():
         self.episode = 0
         self.steps = 0
 
-    def pre_step_execute(self, env, agent_selection):
+    def pre_step_execute(self, env, agent_selection, action):
         """Method to be executed before each step of the environment.
         
         Args:

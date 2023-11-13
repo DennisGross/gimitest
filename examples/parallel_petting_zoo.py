@@ -18,7 +18,7 @@ class ReachabilityTestCase(TestCase):
         self.counter += 1
         return original_state, action_args, original_next_state, original_reward, original_terminated, original_truncated, original_info
 
-env = pistonball_v6.parallel_env(render_mode="human")
+env = pistonball_v6.parallel_env()
 # Reachability test case
 test_case = ReachabilityTestCase({"goal": 5})
 test_cases = [test_case]
@@ -29,6 +29,7 @@ observations, infos = env.reset(seed=42)
 
 steps = 0
 
+
 while env.agents:
     # this is where you would insert your policy
     actions = {agent: env.action_space(agent).sample() for agent in env.agents}
@@ -36,5 +37,8 @@ while env.agents:
     observations, rewards, terminations, truncations, infos = env.step(actions)
     steps+=1
     if steps > 25:
+        #print(observations["piston_0"].shape)
+        print(rewards)
+        print("Number of agents: ", len(env.agents))
         break
 env.close()
