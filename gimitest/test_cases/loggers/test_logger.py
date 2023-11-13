@@ -21,6 +21,7 @@ class TestLogger:
         self.collected_reward = 0
         self.collected_actions = []
         self.times = []
+        self.meta_data = {}
         
     
     def create_test_folder(self):
@@ -87,19 +88,23 @@ class TestLogger:
         if not os.path.exists(episode_dir):
             os.makedirs(episode_dir)
 
+        # Update meta data with meta data
+        self.meta_data.update(meta_data)
         # Add collected reward
-        meta_data["collected_reward"] = self.collected_reward
+        self.meta_data["collected_reward"] = self.collected_reward
         # Add entropy of actions
-        meta_data["entropy_of_actions"] = self.__calculate_entropy(self.collected_actions)
+        self.meta_data["entropy_of_actions"] = self.__calculate_entropy(self.collected_actions)
         # Number of unique actions
-        meta_data["number_of_unique_actions"] = len(set(self.collected_actions))
+        self.meta_data["number_of_unique_actions"] = len(set(self.collected_actions))
         # Number of states
-        meta_data["number_of_states"] = len(self.collected_actions)+1
+        self.meta_data["number_of_states"] = len(self.collected_actions)+1
         # Add average time difference
-        meta_data["avg_time_per_step"] = self.__average_time_diff(self.times)
+        self.meta_data["avg_time_per_step"] = self.__average_time_diff(self.times)
         path = os.path.join(episode_dir, "meta.json")
         with open(path, 'w') as f:
-            json.dump(meta_data, f)
+            json.dump(self.meta_data, f)
+        
+        self.meta_data = {}
         
         # Reset collected reward
         self.collected_reward = 0

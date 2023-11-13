@@ -25,29 +25,28 @@ class TestAnalyse:
 
     
 
-    def plot_key_value_over_episodes(self, key, filepath=None):
+    def plot_key_value_over_episodes(self, key, filepath=None, xlabel="episode"):
         number_of_episodes = self.test_logger.count_episodes()
         values = []
         for episode in range(1, number_of_episodes):
             try:
                 episode_dict = self.test_logger.load_episode(episode)
-                print(episode_dict)
                 value = self.__find_value_of_key_in_dictionary(episode_dict, key)
-                print(value)
                 values.append(value)
             except Exception as e:
                 print(e)
                 continue
-        
-        plt.plot(values)
+
+        plt.boxplot(values)  # Changed from plt.plot to plt.boxplot
         plt.ylabel(key)
-        plt.xlabel('episode')
-        plt.grid(0.2)
-        if filepath == None:
+        plt.xlabel(xlabel)
+        plt.grid(True)  # Modified for better visibility of grid
+        if filepath is None:
             plt.savefig(key + '.png')
         else:
             plt.savefig(filepath)
         plt.clf()
+
 
 
     def plot_key1_key2_and_value(self, key1, key2, value_key, xlabel=None, ylabel=None, filepath=None):
