@@ -67,6 +67,13 @@ class GymDecorator:
             except:
                 # If not possible, set to None
                 agent_selection = None
+            
+            # Makes it possible to test, if another action was chosen
+            if test_cases is not None:
+                for test_case in test_cases:
+                    action = test_case.pre_step_execute(env, agent_selection)
+                    if action is not None:
+                        action_args[0] = action
 
             # Call the original step function
             if agent_selection is None:
@@ -141,7 +148,12 @@ class GymDecorator:
                 original_reset_function(*args, **kwargs)
                 next_state, reward, done, truncated, info = env.last()
 
-            
+            # Makes it possible to change the initial state (for instance, for adversarial attacks)
+            if test_cases is not None:
+                for test_case in test_cases:
+                    tmp_next_state = test_case.post_episode_execute()
+                    if action is not None:
+                        next_state = tmp_next_state
             
             env.tmp_storage_of_state = next_state
 

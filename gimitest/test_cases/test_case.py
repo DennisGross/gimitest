@@ -43,6 +43,19 @@ class TestCase():
         self.episode = 0
         self.steps = 0
 
+    def pre_step_execute(self, env, agent_selection):
+        """Method to be executed before each step of the environment.
+        
+        Args:
+            env (object): The gym environment object.
+            agent_selection (object): The agent selection object.
+
+        Returns:
+            None: Placeholder for child classes to implement this method.
+        """
+        #print("I am the pre_step_execute method of the TestCase class (modify me).")
+        pass
+
     def step_execute(self, env, original_state, action_args, original_next_state, original_reward, original_terminated, original_truncated, original_info, agent_selection):
         """Method to be executed during each step of the environment.
         
@@ -72,6 +85,15 @@ class TestCase():
         #print("I am the episode_execute method of the TestCase class (modify me).")
         pass
 
+    def post_episode_execute(self):
+        """Method to be executed at the end of each episode.
+        
+        Returns:
+            None: Placeholder for child classes to implement this method.
+        """
+        #print("I am the post_episode_execute method of the TestCase class (modify me).")
+        pass
+
 
     def create_message(self):
         """Method for creating messages or information to be passed along.
@@ -97,16 +119,12 @@ class TestCase():
         # Extend meta_data dictionary with all key, value pairs from msg
         self.meta_data["configurator"] = msg
 
-
-
     def episode_increment(self):
         """
         Method for incrementing the episode number.
         """
         self.episode += 1
         
-        
-
     def step_increment(self):
         """
         Method for incrementing the step number.
