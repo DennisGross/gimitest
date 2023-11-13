@@ -21,6 +21,7 @@ class TestLogger:
         self.collected_reward = 0
         self.collected_actions = []
         self.times = []
+        self.step_data = {}
         self.meta_data = {}
         
     
@@ -88,8 +89,8 @@ class TestLogger:
         if not os.path.exists(episode_dir):
             os.makedirs(episode_dir)
 
-        # Update meta data with meta data
-        self.meta_data.update(meta_data)
+        # Add agent selection
+        self.meta_data["custom_data"] = meta_data
         # Add collected reward
         self.meta_data["collected_reward"] = self.collected_reward
         # Add entropy of actions
@@ -115,13 +116,13 @@ class TestLogger:
 
     
 
-    def store_own_episode_step(self, episode, step, state, action,  next_state, reward, done, truncated, info, meta_data, agent_selection):
+    def store_own_episode_step(self, episode, step, state, action,  next_state, reward, done, truncated, info, step_data, agent_selection):
         """
         Override this method to store the test result.
         """
         pass
     
-    def store_episode_step(self, episode, step, state, action,  next_state, reward, done, truncated, info, meta_data, agent_selection):
+    def store_episode_step(self, episode, step, state, action,  next_state, reward, done, truncated, info, step_data, agent_selection):
         """
         Method for storing the test result.
 
@@ -145,17 +146,17 @@ class TestLogger:
             os.makedirs(episode_dir)
         path = self.create_file_path(episode, step)
         with open(path, 'wb') as f:
-            data = {}
-            data["state"] = state
-            data["action"] = action
-            data["reward"] = reward
-            data["next_state"] = next_state
-            data["done"] = done
-            data["truncated"] = truncated
-            data["info"] = info
-            data["meta_data"] = meta_data
-            data["agent_selection"] = agent_selection
-            pickle.dump(data, f)
+            self.step_data["state"] = state
+            self.step_data["action"] = action
+            self.step_data["reward"] = reward
+            self.step_data["next_state"] = next_state
+            self.step_data["done"] = done
+            self.step_data["truncated"] = truncated
+            self.step_data["info"] = info
+            self.step_data["custom_data"] = step_data
+            self.step_data["agent_selection"] = agent_selection
+            pickle.dump(self.step_data, f)
+            self.step_data = {}
         self.collected_actions.append(action)
         self.collected_reward += reward
 

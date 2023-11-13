@@ -39,6 +39,7 @@ class TestCase():
         """
         self.parameters = parameters
         self.meta_data = {}
+        self.step_data = {}
         self.episode = 0
         self.steps = 0
 
@@ -103,6 +104,7 @@ class TestCase():
         Method for incrementing the episode number.
         """
         self.episode += 1
+        
         
 
     def step_increment(self):
