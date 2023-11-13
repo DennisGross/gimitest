@@ -116,6 +116,6 @@ print(f"Avg Reward over 100 evaluation episodes: {avg_reward}")
 
 # Analyze the test logs
 m_analytics = TestAnalyse(m_logger)
-m_analytics.plot_key_value_over_episodes("number_of_states", filepath="number_of_states_real_training.png")
-m_analytics.plot_key_value_over_episodes("avg_time_per_step", filepath="avg_time_per_step_real_training.png")
-m_analytics.plot_key_value_over_episodes("entropy_of_actions", filepath="entropy_of_actions_real_training.png")
+m_analytics.plot_key_value_over_episodes("number_of_states", filepath="number_of_states_real_training.png", xlabel="")
+m_analytics.plot_key_value_over_episodes("avg_time_per_step", filepath="avg_time_per_step_real_training.png", xlabel="")
+m_analytics.plot_key_value_over_episodes("entropy_of_actions", filepath="entropy_of_actions_real_training.png", xlabel="")

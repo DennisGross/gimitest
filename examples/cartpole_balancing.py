@@ -38,9 +38,9 @@ def evaluate_agent(agent, env, episodes=1000):
     return np.mean(rewards)
 
 best_avg_reward = -np.inf  # Initialize the best average reward to negative infinity
-n_episodes = 10  # Number of training episodes
+n_episodes = 1000  # Number of training episodes
 evaluate_interval = n_episodes  # Evaluate the agent every 100 episodes
-EVALS = 10
+EVALS = 100
 save_path = "best_agent"  # Folder where to save the best agent
 
 for episode in range(1, n_episodes + 1):
