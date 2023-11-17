@@ -65,9 +65,12 @@ class Configurator():
                 return True
             
             for attr in dir(obj):
-                nested_attr = getattr(obj, attr)
-                if isinstance(nested_attr, object) and not isinstance(nested_attr, (str, int, float, bytes)):
-                    q.put(nested_attr)
+                try:
+                    nested_attr = getattr(obj, attr)
+                    if isinstance(nested_attr, object) and not isinstance(nested_attr, (str, int, float, bytes)):
+                        q.put(nested_attr)
+                except:
+                    pass
         
         return False
 
@@ -115,7 +118,7 @@ class Configurator():
                 try:
                     nested_attr = getattr(obj, attr)
                 except:
-                    print("Error", obj, attr)
+                    #print("Error", obj, attr)
                     continue
                 
                 if isinstance(nested_attr, object) and not isinstance(nested_attr, (str, int, float, bytes)):

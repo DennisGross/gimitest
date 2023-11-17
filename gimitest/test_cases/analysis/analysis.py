@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from sklearn.decomposition import PCA
 from sklearn.manifold import TSNE
+import random
 
 class TestAnalyse:
 
@@ -46,6 +47,47 @@ class TestAnalyse:
         else:
             plt.savefig(filepath)
         plt.clf()
+
+    def plot_keys_over_episodes(self, keys, filepath=None, xlabel="episode", ylbale="value"):
+        number_of_episodes = self.test_logger.count_episodes()
+        values = {}
+        for episode in range(1, number_of_episodes):
+            try:
+                episode_dict = self.test_logger.load_episode(episode)
+                for key in keys:
+                    value = self.__find_value_of_key_in_dictionary(episode_dict, key)
+                    if key in values:
+                        values[key].append(value)
+                    else:
+                        values[key] = [value]
+                
+            except Exception as e:
+                print(e)
+                continue
+
+        # Line plot
+        line_styles = ['-', '--', '-.', ':']  # Define different line styles
+        markers = ['o', '^', 's', 'D', '*', 'x', '+', 'p']
+
+        style_index = 0  # To track the current line style
+        marker_index = 0
+
+        for key in keys:
+            plt.plot(values[key], label=key, linestyle=line_styles[style_index], marker=markers[marker_index])
+            style_index = (style_index + 1) % len(line_styles)  # Cycle through styles
+            marker_index = (marker_index + 1) % len(markers)  # Cycle through styles
+
+
+        plt.ylabel(ylbale)
+        plt.xlabel(xlabel)
+        plt.grid(True)  # Modified for better visibility of grid
+        plt.legend()
+        if filepath is None:
+            plt.savefig(key + '.png')
+        else:
+            plt.savefig(filepath)
+        plt.clf()
+
 
 
 
