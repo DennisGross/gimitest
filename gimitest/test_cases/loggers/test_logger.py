@@ -6,6 +6,7 @@ from collections import Counter
 import math
 from statistics import mean
 import os
+import hashlib
 
 class TestLogger:
 
@@ -17,21 +18,43 @@ class TestLogger:
         self.collected_actions = []
         self.times = []
 
+
+
+    def generate_hash_for_instance(self, instance):
+        # Serialize the instance
+        serialized_instance = pickle.dumps(instance)
+
+        # Create a hash of the serialized data
+        hash_object = hashlib.sha256(serialized_instance)
+        hash_string = hash_object.hexdigest()
+
+        return hash_string
+
+
     def init_db(self):
         """Initializes the SQLite database and creates necessary tables."""
         with sqlite3.connect(self.db_path) as conn:
             cursor = conn.cursor()
             cursor.execute('''CREATE TABLE IF NOT EXISTS episodes (
-                              id INTEGER PRIMARY KEY,
-                              meta_data TEXT
-                          )''')
+                            id INTEGER PRIMARY KEY,
+                            meta_data TEXT
+                        )''')
             cursor.execute('''CREATE TABLE IF NOT EXISTS steps (
-                              episode_id INTEGER,
-                              step INTEGER,
-                              data BLOB,
-                              PRIMARY KEY (episode_id, step),
-                              FOREIGN KEY (episode_id) REFERENCES episodes(id)
-                          )''')
+                            episode_id INTEGER,
+                            step INTEGER,
+                            data BLOB,
+                            state_hash TEXT,
+                            reward_hash TEXT,
+                            next_state_hash TEXT,
+                            done_hash TEXT,
+                            truncated_hash TEXT,
+                            info_hash TEXT,
+                            custom_data_hash TEXT,
+                            agent_selection_hash TEXT,
+                            PRIMARY KEY (episode_id, step),
+                            FOREIGN KEY (episode_id) REFERENCES episodes(id)
+                        )''')
+
 
     def __calculate_entropy(self, values):
         """Calculates the entropy of a list of values."""
@@ -62,26 +85,46 @@ class TestLogger:
             self.reset_episode_data()
 
     def store_episode_step(self, episode, step, state, action, next_state, reward, done, truncated, info, step_data, agent_selection):
-        """Stores step data for an episode in the database."""
         current_time = time.time()
         self.times.append(current_time)
+        
         with sqlite3.connect(self.db_path) as conn:
             cursor = conn.cursor()
+
+            # Serialize and hash each individual component
+            state_hash = self.generate_hash_for_instance(state)
+            reward_hash = self.generate_hash_for_instance(reward)
+            next_state_hash = self.generate_hash_for_instance(next_state)
+            done_hash = self.generate_hash_for_instance(done)
+            truncated_hash = self.generate_hash_for_instance(truncated)
+            info_hash = self.generate_hash_for_instance(info)
+            custom_data_hash = self.generate_hash_for_instance(step_data)
+            agent_selection_hash = self.generate_hash_for_instance(agent_selection)
+
             step_data_blob = {
                 "state": state,
                 "action": action,
-                "reward": reward,
                 "next_state": next_state,
+                "reward": reward,
                 "done": done,
                 "truncated": truncated,
                 "info": info,
                 "custom_data": step_data,
                 "agent_selection": agent_selection
             }
-            cursor.execute("INSERT INTO steps (episode_id, step, data) VALUES (?, ?, ?)",
-                           (episode, step, pickle.dumps(step_data_blob)))
+
+            cursor.execute("""
+                INSERT INTO steps (episode_id, step, data, state_hash, reward_hash, next_state_hash, done_hash, truncated_hash, info_hash, custom_data_hash, agent_selection_hash) 
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                """, (
+                    episode, step, pickle.dumps(step_data_blob), 
+                    state_hash, reward_hash, next_state_hash, done_hash, truncated_hash, info_hash, custom_data_hash, agent_selection_hash
+                )
+            )
+
             self.collected_actions.append(action)
             self.collected_reward += reward
+
 
     def reset_episode_data(self):
         """Resets the collected data for a new episode."""

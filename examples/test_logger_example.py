@@ -31,11 +31,7 @@ for episode in range(10):
             state, info = env.reset()
 
 print("Number of episodes: ", m_logger.count_episodes())
-for i in range(1,m_logger.count_episodes()):
-    print("Episode: ", i)
-    print(m_logger.create_episode_path(i))
-    print(m_logger.count_episode_steps(i))
-    print(m_logger.load_episode_step(i, 0)[1])
+
 
 
 
