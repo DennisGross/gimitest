@@ -1,251 +1,137 @@
-import pickle
+import sqlite3
 import json
-import os
-import shutil
+import pickle
+import time
 from collections import Counter
 import math
 from statistics import mean
-import time
-
-
+import os
 
 class TestLogger:
 
-    def __init__(self, root_dir):
-        """Initializes the TestResult object with given parameters.
-
-        Args:
-            parameters (dict): Custom parameters for the test result.
-        """
-        self.root_dir = root_dir
+    def __init__(self, db_path):
+        """Initializes the TestLogger object with the given database path."""
+        self.db_path = db_path
+        self.init_db()
         self.collected_reward = 0
         self.collected_actions = []
         self.times = []
-        self.step_data = {}
-        self.meta_data = {}
-        
-    
-    def create_test_folder(self):
-        """
-        Method for creating the test folder.
-        """
-        if not os.path.exists(self.root_dir):
-            os.makedirs(self.root_dir)
+
+    def init_db(self):
+        """Initializes the SQLite database and creates necessary tables."""
+        with sqlite3.connect(self.db_path) as conn:
+            cursor = conn.cursor()
+            cursor.execute('''CREATE TABLE IF NOT EXISTS episodes (
+                              id INTEGER PRIMARY KEY,
+                              meta_data TEXT
+                          )''')
+            cursor.execute('''CREATE TABLE IF NOT EXISTS steps (
+                              episode_id INTEGER,
+                              step INTEGER,
+                              data BLOB,
+                              PRIMARY KEY (episode_id, step),
+                              FOREIGN KEY (episode_id) REFERENCES episodes(id)
+                          )''')
 
     def __calculate_entropy(self, values):
-        # Count the occurrences of each unique value in the list
+        """Calculates the entropy of a list of values."""
         value_counts = Counter(values)
-        
-        # Calculate the total number of values
         total_values = len(values)
-        
-        # Initialize entropy to 0
         entropy = 0.0
-        
-        # Calculate entropy
         for count in value_counts.values():
-            # Calculate the probability of each unique value
             probability = count / total_values
-            
-            # Add the entropy for this value to the total entropy
             entropy -= probability * math.log2(probability)
-            
         return entropy
 
-    def __average_time_diff(self, timestamps):        
-        # Initialize an empty list to store the differences
-        time_diffs = []
-        
-        # Loop through the sorted timestamps to calculate differences
-        for i in range(1, len(timestamps)):
-            time_diff = timestamps[i] - timestamps[i-1]
-            time_diffs.append(time_diff)
-            
-        # Calculate the average difference in seconds
-        if time_diffs:
-            avg_diff_seconds = mean(time_diffs)
-        else:
-            return "Cannot calculate average for a list with less than 2 timestamps"
-        
-        return avg_diff_seconds
+    def __average_time_diff(self, timestamps):
+        """Calculates the average time difference between consecutive timestamps."""
+        time_diffs = [timestamps[i] - timestamps[i-1] for i in range(1, len(timestamps))]
+        return mean(time_diffs) if time_diffs else None
+
+    def store_episode(self, episode, meta_data, agent_selection):
+        """Stores episode data in the database."""
+        with sqlite3.connect(self.db_path) as conn:
+            cursor = conn.cursor()
+            meta_data["collected_reward"] = self.collected_reward
+            meta_data["entropy_of_actions"] = self.__calculate_entropy(self.collected_actions)
+            meta_data["number_of_unique_actions"] = len(set(self.collected_actions))
+            meta_data["number_of_states"] = len(self.collected_actions) + 1
+            meta_data["avg_time_per_step"] = self.__average_time_diff(self.times)
+            cursor.execute("INSERT INTO episodes (id, meta_data) VALUES (?, ?)",
+                           (episode, json.dumps(meta_data)))
+            self.reset_episode_data()
+
+    def store_episode_step(self, episode, step, state, action, next_state, reward, done, truncated, info, step_data, agent_selection):
+        """Stores step data for an episode in the database."""
+        current_time = time.time()
+        self.times.append(current_time)
+        with sqlite3.connect(self.db_path) as conn:
+            cursor = conn.cursor()
+            step_data_blob = {
+                "state": state,
+                "action": action,
+                "reward": reward,
+                "next_state": next_state,
+                "done": done,
+                "truncated": truncated,
+                "info": info,
+                "custom_data": step_data,
+                "agent_selection": agent_selection
+            }
+            cursor.execute("INSERT INTO steps (episode_id, step, data) VALUES (?, ?, ?)",
+                           (episode, step, pickle.dumps(step_data_blob)))
+            self.collected_actions.append(action)
+            self.collected_reward += reward
+
+    def reset_episode_data(self):
+        """Resets the collected data for a new episode."""
+        self.collected_reward = 0
+        self.collected_actions = []
+        self.times = []
+
+    def load_episode(self, episode):
+        """Loads and returns the metadata for a specific episode."""
+        with sqlite3.connect(self.db_path) as conn:
+            cursor = conn.cursor()
+            cursor.execute("SELECT meta_data FROM episodes WHERE id = ?", (episode,))
+            row = cursor.fetchone()
+            return json.loads(row[0]) if row else None
+
+    def load_episode_step(self, episode, step):
+        """Loads and returns the data for a specific step of an episode."""
+        with sqlite3.connect(self.db_path) as conn:
+            cursor = conn.cursor()
+            cursor.execute("SELECT data FROM steps WHERE episode_id = ? AND step = ?", (episode, step))
+            row = cursor.fetchone()
+            return pickle.loads(row[0]) if row else None
+
+    def count_episodes(self):
+        """Returns the total number of episodes stored in the database."""
+        with sqlite3.connect(self.db_path) as conn:
+            cursor = conn.cursor()
+            cursor.execute("SELECT COUNT(*) FROM episodes")
+            return cursor.fetchone()[0]
+
+    def count_episode_steps(self, episode):
+        """Returns the number of steps in a specified episode."""
+        with sqlite3.connect(self.db_path) as conn:
+            cursor = conn.cursor()
+            cursor.execute("SELECT COUNT(*) FROM steps WHERE episode_id = ?", (episode,))
+            return cursor.fetchone()[0]
+
+    def delete_test_folder(self):
+        """Deletes the SQLite database file."""
+        if os.path.exists(self.db_path):
+            os.remove(self.db_path)
 
     def store_own_episode(self, episode, meta_data, agent_selection):
         """
         Override this method to store the test result.
         """
         pass
-    
-
-    def store_episode(self, episode, meta_data, agent_selection):
-        """
-        Method for storing the test result.
-
-        Args:
-            path (str): The path to store the test result.
-            meta_data (dict): The test episode meta data.
-        """
-        self.create_test_folder()
-        episode_dir = self.create_episode_path(episode)
-        if not os.path.exists(episode_dir):
-            os.makedirs(episode_dir)
-
-        # Add agent selection
-        self.meta_data["custom_data"] = meta_data
-        # Add collected reward
-        self.meta_data["collected_reward"] = self.collected_reward
-        # Add entropy of actions
-        self.meta_data["entropy_of_actions"] = self.__calculate_entropy(self.collected_actions)
-        # Number of unique actions
-        self.meta_data["number_of_unique_actions"] = len(set(self.collected_actions))
-        # Number of states
-        self.meta_data["number_of_states"] = len(self.collected_actions)+1
-        # Add average time difference
-        self.meta_data["avg_time_per_step"] = self.__average_time_diff(self.times)
-        path = os.path.join(episode_dir, "meta.json")
-        with open(path, 'w') as f:
-            json.dump(self.meta_data, f)
-        
-        self.meta_data = {}
-        
-        # Reset collected reward
-        self.collected_reward = 0
-        # Reset collected actions
-        self.collected_actions = []
-        # Reset times
-        self.times = []
-
-    
 
     def store_own_episode_step(self, episode, step, state, action,  next_state, reward, done, truncated, info, step_data, agent_selection):
         """
         Override this method to store the test result.
         """
         pass
-    
-    def store_episode_step(self, episode, step, state, action,  next_state, reward, done, truncated, info, step_data, agent_selection):
-        """
-        Method for storing the test result.
-
-        Args:
-            path (str): The path to store the test result.
-            state (object): The current state of the environment.
-            action (object): The action taken.
-            reward (float): The reward returned by the original step function.
-            next_state (object): The next state returned by the original step function.
-            done (bool): The termination flag returned by the original step function.
-            truncated (bool): The truncation flag returned by the original step function.
-            info (dict): The info dictionary returned by the original step function.
-            meta_data (dict): The test case meta data for step.
-        """
-        # Get current time stemp as int
-        current_time = time.time()
-        self.times.append(current_time)
-
-        episode_dir = self.create_episode_path(episode)
-        if not os.path.exists(episode_dir):
-            os.makedirs(episode_dir)
-        path = self.create_file_path(episode, step)
-        with open(path, 'wb') as f:
-            self.step_data["state"] = state
-            self.step_data["action"] = action
-            self.step_data["reward"] = reward
-            self.step_data["next_state"] = next_state
-            self.step_data["done"] = done
-            self.step_data["truncated"] = truncated
-            self.step_data["info"] = info
-            self.step_data["custom_data"] = step_data
-            self.step_data["agent_selection"] = agent_selection
-            pickle.dump(self.step_data, f)
-            self.step_data = {}
-        self.collected_actions.append(action)
-        self.collected_reward += reward
-
-    def create_episode_path(self, episode):
-        """
-        Method for creating the episode path for the test result.
-
-        Args:
-            episode (int): The episode number.
-
-        Returns:
-            str: The episode path.
-        """
-        episode_dir = "episode_" + str(episode)
-        path = os.path.join(self.root_dir, episode_dir)
-        return path
-
-    def create_file_path(self, episode, step):
-        """
-        Method for creating the file path for the test result.
-
-        Args:
-            episode (int): The episode number.
-            step (int): The step number.
-
-        Returns:
-            str: The file path.
-        """
-        file_name = "step_" + str(step) + ".pkl"
-        path = os.path.join(self.root_dir,  "episode_" + str(episode), file_name)
-        return path
-
-    def load_episode_step(self, episode, step):
-        """
-        Method for loading the test episode step.
-
-        Args:
-            episode (int): The episode number.
-            step (int): The step number.
-
-        Returns:
-            tuple: The test result.
-        """
-        path = self.create_file_path(episode, step)
-        with open(path, 'rb') as f:
-            return pickle.load(f)
-
-    def load_episode(self, episode):
-        """
-        Method for loading the test episode.
-
-        Args:
-            episode (int): The episode number.
-
-        Returns:
-            tuple: The test result.
-        """
-        episode_dir = self.create_episode_path(episode)
-        path = os.path.join(episode_dir, "meta.json")
-        with open(path, 'r') as f:
-            return json.load(f)
-
-    
-    def count_episodes(self):
-        """
-        Method for counting the number of episodes in the test folder.
-
-        Returns:
-            int: The number of episodes.
-        """
-        return len([name for name in os.listdir(self.root_dir) if os.path.isdir(os.path.join(self.root_dir, name))])
-    
-    def count_episode_steps(self, episode):
-        """
-        Method for counting the number of steps in the test episode.
-
-        Args:
-            episode (int): The episode number.
-
-        Returns:
-            int: The number of steps.
-        """
-        episode_dir = self.create_episode_path(episode)
-        # Count all file names that start with step and end with .pkl
-        return len([name for name in os.listdir(episode_dir) if os.path.isfile(os.path.join(episode_dir, name)) and name.startswith("step") and name.endswith(".pkl")])
-
-    def delete_test_folder(self):
-        """
-        Method for deleting the test folder.
-        """
-        if os.path.exists(self.root_dir):
-            shutil.rmtree(self.root_dir)
