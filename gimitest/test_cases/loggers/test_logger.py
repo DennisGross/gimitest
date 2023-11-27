@@ -76,12 +76,18 @@ class TestLogger:
         with sqlite3.connect(self.db_path) as conn:
             cursor = conn.cursor()
             meta_data["collected_reward"] = self.collected_reward
-            meta_data["entropy_of_actions"] = self.__calculate_entropy(self.collected_actions)
-            meta_data["number_of_unique_actions"] = len(set(self.collected_actions))
+            try:
+                meta_data["entropy_of_actions"] = self.__calculate_entropy(self.collected_actions)
+                meta_data["number_of_unique_actions"] = len(set(self.collected_actions))
+            except:
+                pass
             meta_data["number_of_states"] = len(self.collected_actions) + 1
             meta_data["avg_time_per_step"] = self.__average_time_diff(self.times)
-            cursor.execute("INSERT INTO episodes (id, meta_data) VALUES (?, ?)",
-                           (episode, json.dumps(meta_data)))
+            try:
+                cursor.execute("INSERT INTO episodes (id, meta_data) VALUES (?, ?)",
+                            (episode, json.dumps(meta_data)))
+            except:
+                pass
             self.reset_episode_data()
 
     def store_episode_step(self, episode, step, state, action, next_state, reward, done, truncated, info, step_data, agent_selection):
@@ -123,7 +129,10 @@ class TestLogger:
             )
 
             self.collected_actions.append(action)
-            self.collected_reward += reward
+            try:
+                self.collected_reward += reward
+            except:
+                pass
 
 
     def reset_episode_data(self):
