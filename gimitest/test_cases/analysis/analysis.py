@@ -7,6 +7,7 @@ import numpy as np
 from sklearn.decomposition import PCA
 from sklearn.manifold import TSNE
 import random
+import pandas as pd
 
 class TestAnalyse:
 
@@ -23,6 +24,32 @@ class TestAnalyse:
                     item = self.__find_value_of_key_in_dictionary(v, key)
                     if item is not None:
                         return item
+
+
+    def create_dataset(self, keys, filepath=None):
+        number_of_episodes = self.test_logger.count_episodes()
+        data = []
+
+        for episode in range(1, number_of_episodes):
+            try:
+                episode_dict = self.test_logger.load_episode(episode)
+                print(episode_dict)
+                episode_data = {key: self.__find_value_of_key_in_dictionary(episode_dict, key) for key in keys}
+                data.append(episode_data)
+            except Exception as e:
+                print(f"Error in episode {episode}: {e}")
+                continue
+
+        # Convert the list of dictionaries to a Pandas DataFrame
+        dataset = pd.DataFrame(data)
+
+        # Optionally save the dataset to a file (e.g., as a CSV file)
+        if filepath:
+            dataset.to_csv(filepath, index=False)
+
+        return dataset
+
+    
 
     
 

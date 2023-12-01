@@ -43,17 +43,8 @@ class ParameterConfigurator(Configurator):
         return self.get_attribute(env, self.parameters["state_variable_name"])
 
 
-    def create_pre_reset_message(self):
-        """Method for getting messages or information to be passed along.
-        
-        Returns:
-            dict: The message to be passed along.
-        """
-        # Create a message with the parameters and values
-        return {}
 
-
-    def create_message(self):
+    def create_post_reset_message(self):
         """Method for getting messages or information to be passed along.
         
         Returns:
@@ -62,6 +53,8 @@ class ParameterConfigurator(Configurator):
         # Create a message with the parameters and values
         message = {"parameter1": self.value1, "parameter2": self.value2}
         return message
+
+    
 
 
 # Init Gym
@@ -78,7 +71,7 @@ configurator = ParameterConfigurator({"state_variable_name": "state", "parameter
 env = GymDecorator.decorate_gym(env, test_cases, configurator)
 # Run the environment
 state, info = env.reset()
-for _ in range(1000):
+for _ in range(100):
     action = env.action_space.sample()
     state, reward, done, truncated, info = env.step(action)
     if done or truncated:
@@ -89,5 +82,7 @@ m_analytics = TestAnalyse(m_logger)
 m_analytics.plot_key_value_over_episodes("collected_reward")
 m_analytics.plot_key1_key2_and_value("parameter1", "parameter2", "collected_reward", xlabel="masscart", ylabel="length")
 
+df = m_analytics.create_dataset(keys=["parameter1", "parameter2", "collected_reward"])
+print(df.head())
 # Delete the test logs
-m_logger.delete_test_folder()
+#m_logger.delete_test_folder()
