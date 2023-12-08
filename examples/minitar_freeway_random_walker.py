@@ -28,7 +28,7 @@ class GoalTester(GTest):
         return state, action, next_state, reward, terminated, truncated, info
 
     def pre_reset_configuration(self):
-        # Change speed1 in the internal environment variable "channels"
+        # Change speed1 and speed2 in the internal environment variable "channels"
         channels = self.get_attribute(env, "channels")
 
         channels["speed1"] = random.randint(1,6)
@@ -46,15 +46,19 @@ class GoalTester(GTest):
 
 
 NUM_STEPS = 5002 # Default termination after 2500 frames
+
+# 1. Create environment
 env = gym.make('MinAtar/Freeway-v1')
-
+# 2. Create GoalTester
 m_gtest = GoalTester(env)
+# 3. Decorate environment with GoalTester
 EnvDecorator.decorate(env, m_gtest)
-
+# 4. Create logger (optional)
 m_logger = GLogger("minitar_freeway")
+# 5. Decorate GoalTester with logger (optional)
 GTestDecorator.decorate_with_logger(m_gtest, m_logger)
 
-# Interact with the environment
+# Interact with the environment as usual
 state, info = env.reset()
 for _ in range(NUM_STEPS):
     action = env.action_space.sample()  # Randomly sample an action
@@ -65,10 +69,10 @@ for _ in range(NUM_STEPS):
     else:
         state = next_state
 
-
 # Create dataset
 df = m_logger.create_episode_dataset(["speed1", "speed2", "goal_counter"])
 print(df.head())
-
+df = m_logger.create_step_dataset()
+print(df.head())
 # Delete the database of the logger
 m_logger.delete_database()
