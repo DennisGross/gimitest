@@ -6,7 +6,6 @@ from env_decorator import EnvDecorator
 from gtest import GTest
 from glogger import GLogger
 from gtest_decorator import GTestDecorator
-from ganalysis import GAnalyse
 import random
 
 
@@ -68,8 +67,7 @@ for _ in range(NUM_STEPS):
 
 
 # Create dataset
-g_analyse = GAnalyse(m_logger)
-df = g_analyse.create_episode_dataset(["speed1", "speed2", "goal_counter"])
+df = m_logger.create_episode_dataset(["speed1", "speed2", "goal_counter"])
 print(df.head())
 
 # Delete the database of the logger

@@ -40,16 +40,10 @@ The testing methods allow us to create specific tests at different times (pre/po
 - `pre_reset_test(...)`
 - `post_reset_test(...)`
 
-### 📊 Additional Functionality
+### 📊 GLogger
 `GLogger` allows us to log the whole testing process at every point in time.
 Just decorate `GTest` with a `GLogger`:
 ```
 m_logger = GLogger("m_log")
 GTestDecorator.decorate_with_logger(m_gtest, m_logger)
-```
-`GAnalyse` gives us further functionality to analyse the logs.
-To analyse the logs use the logger:
-```
-g_analyse = GAnalyse(m_logger)
-# DO YOUR STUFF
 ```
