@@ -60,10 +60,10 @@ class GoalTester(GTest):
 
 NUM_STEPS = 5002 # Default termination after 2500 frames
 
-# 0. Create agent
-agent = DummyAgent()
-# 1. Create environment
+# 0. Create environment
 env = gym.make('MinAtar/Freeway-v1')
+# 1. Create agent
+agent = DummyAgent()
 # 2. Create GoalTester
 m_gtest = GoalTester(env, agent)    # Opional: Pass agent to GoalTester
 # 3. Decorate environment with GoalTester
