@@ -21,6 +21,9 @@ EnvDecorator.decorate(env, m_gtest)
 ## 👮🏼‍♂️ GTest
 While `GTest` serves as a base class, it's designed to be flexible and extendable. Users can create custom GTest subclasses and override specific methods to suit their testing needs.
 
+The `step(...)`-wrapping first executes the `pre_step_configuration(...)` method, then the `pre_step_test(...)` method, then the original `step(...)` method, then the `post_step_test(...)` method, and finally the `post_step_configuration(...)` method.
+
+The `reset(...)`-wrapping first executes the `pre_reset_test(...)` method, then the `pre_reset_configuration(...)` method, then the original `reset(...)` method, then the `post_reset_test(...)` method, and finally the `post_reset_configuration(...)` method.
 
 #### Configuration Methods
 The configuration methods allow us to override the way how your `GTest` can modify the environment. For instance, changing the gravity or cart mass in the ccartpole environment at different times (pre/post/reset/step):
