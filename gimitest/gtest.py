@@ -4,8 +4,9 @@ from queue import Queue
 
 class GTest:
 
-    def __init__(self, env):
+    def __init__(self, env, agents = None):
         self.env = env
+        self.agents = agents
         self.episode = -1
         self.step = 0
         self.step_data = {}

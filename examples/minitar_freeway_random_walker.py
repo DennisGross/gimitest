@@ -9,10 +9,20 @@ from gtest_decorator import GTestDecorator
 import random
 
 
+class DummyAgent:
+
+    def __init__(self):
+        pass
+
+    def act(self, state):
+        # Randomly sample an action
+        return random.randint(0, 2)
+
+
 class GoalTester(GTest):
 
-    def __init__(self, env):
-        super().__init__(env)
+    def __init__(self, env, agent):
+        super().__init__(env, agent)
         self.goal_counter = 0
 
     def post_step_test(self, state, action, next_state, reward, terminated, truncated, info, agent_selection):
@@ -24,6 +34,9 @@ class GoalTester(GTest):
 
         # Store result into episode_data for logger
         self.episode_data["goal_counter"] = self.goal_counter
+        # It is also possible to handle the agents inside the GoalTester
+        self.step_data["Another Random Action"] = self.agents.act(state)
+        self.step_data["Q-Values are possible to store here"] = "YES"
 
         return state, action, next_state, reward, terminated, truncated, info
 
@@ -47,10 +60,12 @@ class GoalTester(GTest):
 
 NUM_STEPS = 5002 # Default termination after 2500 frames
 
+# 0. Create agent
+agent = DummyAgent()
 # 1. Create environment
 env = gym.make('MinAtar/Freeway-v1')
 # 2. Create GoalTester
-m_gtest = GoalTester(env)
+m_gtest = GoalTester(env, agent)    # Opional: Pass agent to GoalTester
 # 3. Decorate environment with GoalTester
 EnvDecorator.decorate(env, m_gtest)
 # 4. Create logger (optional)
@@ -61,7 +76,7 @@ GTestDecorator.decorate_with_logger(m_gtest, m_logger)
 # Interact with the environment as usual
 state, info = env.reset()
 for _ in range(NUM_STEPS):
-    action = env.action_space.sample()  # Randomly sample an action
+    action = agent.act(state)  # Randomly sample an action
     next_state, reward, done, truncated, info = env.step(action)
     #print(f"State: {state}, Action: {action}, Next State: {next_state}, Reward: {reward}, Done: {done}")
     if done or truncated:
