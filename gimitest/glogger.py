@@ -135,9 +135,23 @@ class GLogger:
         """Loads and returns the data for a specific step of an episode."""
         with sqlite3.connect(self.db_path) as conn:
             cursor = conn.cursor()
-            cursor.execute("SELECT data FROM steps WHERE episode_id = ? AND step = ?", (episode, step))
+            cursor.execute("SELECT episode_id, step, state, action, next_state, reward, done, truncated, info, step_data, agent_selection FROM steps WHERE episode_id = ? AND step = ?", (episode, step))
             row = cursor.fetchone()
-            return pickle.loads(row[0]) if row else None
+            if row is None:
+                return None
+            data_dict = {}
+            data_dict["episode_id"] = row[0]
+            data_dict["step"] = row[1]
+            data_dict["state"] = pickle.loads(row[2])
+            data_dict["action"] = pickle.loads(row[3])
+            data_dict["next_state"] = pickle.loads(row[4])
+            data_dict["reward"] = pickle.loads(row[5])
+            data_dict["done"] = row[6]
+            data_dict["truncated"] = row[7]
+            data_dict["info"] = pickle.loads(row[8])
+            data_dict["step_data"] = pickle.loads(row[9])
+            data_dict["agent_selection"] = pickle.loads(row[10])
+            return data_dict
 
     def count_episodes(self):
         """Returns the total number of episodes stored in the database."""
@@ -181,11 +195,12 @@ class GLogger:
                         return item
 
 
-    def create_episode_dataset(self, keys, filepath=None):
-        number_of_episodes = self.count_episodes()
+    def create_episode_dataset(self, keys, filepath=None, start_episode=0, end_episode=None):
+        if end_episode is None:
+            end_episode = self.count_episodes()
         data = []
 
-        for episode in range(0, number_of_episodes):
+        for episode in range(start_episode, end_episode):
             try:
                 episode_dict = self.load_episode(episode)
                 episode_data = {key: self.__find_value_of_key_in_dictionary(episode_dict, key) for key in keys}
@@ -193,6 +208,31 @@ class GLogger:
             except Exception as e:
                 print(f"Error in episode {episode}: {e}")
                 continue
+
+        # Convert the list of dictionaries to a Pandas DataFrame
+        dataset = pd.DataFrame(data)
+
+        # Optionally save the dataset to a file (e.g., as a CSV file)
+        if filepath:
+            dataset.to_csv(filepath, index=False)
+
+        return dataset
+
+    def create_step_dataset(self, filepath=None, start_episode=0, end_episode=None, start_step=0, end_step=None):
+        if end_episode is None:
+            end_episode = self.count_episodes()
+        data = []
+
+        for episode in range(start_episode, end_episode):
+            if end_step is None:
+                end_step = self.count_episode_steps(episode)
+            for step in range(start_step, end_step):
+                try:
+                    step_dict = self.load_episode_step(episode, step)
+                    data.append(step_dict)
+                except Exception as e:
+                    print(f"Error in episode {episode}, step {step}: {e}")
+                    continue
 
         # Convert the list of dictionaries to a Pandas DataFrame
         dataset = pd.DataFrame(data)
