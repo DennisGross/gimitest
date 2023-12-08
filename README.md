@@ -19,8 +19,7 @@ EnvDecorator.decorate(env, m_gtest)
 ```
 
 ## 👮🏼‍♂️ GTest
-Of course the `GTest` is only a base class.
-However, we can just create your own `GTest` by inheriting the class and overwrite the following methods.
+While `GTest` serves as a base class, it's designed to be flexible and extendable. Users can create custom GTest subclasses and override specific methods to suit their testing needs.
 
 
 #### Configuration Methods
