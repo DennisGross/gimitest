@@ -29,7 +29,7 @@ class GTest:
     def pre_reset_test(self):
         return None
 
-    def post_reset_configuration(self):
+    def post_reset_configuration(self, next_state):
         return None
     
     def post_reset_test(self):

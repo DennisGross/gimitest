@@ -34,7 +34,6 @@ class EnvDecorator:
                 
             gtest.post_step_configuration()
     
-    
             tmp_next_state = original_next_state
             tmp_reward = original_reward
             tmp_terminated = original_terminated
@@ -73,7 +72,7 @@ class EnvDecorator:
             env.tmp_storage_of_state = next_state
 
         
-            tmp_state = gtest.post_reset_configuration()
+            tmp_state = gtest.post_reset_configuration(next_state)
             if tmp_state is not None:
                 env.tmp_storage_of_state = tmp_state
             
