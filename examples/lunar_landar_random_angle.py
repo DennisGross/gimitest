@@ -14,8 +14,8 @@ import Box2D
 
 class RandomAngleTester(GTest):
 
-    def __init__(self, env):
-        super().__init__(env)
+    def __init__(self, env, agent=None):
+        super().__init__(env, agent)
 
     def post_reset_configuration(self, next_state):
         # Random angle changer
@@ -38,7 +38,7 @@ class RandomAngleTester(GTest):
 
 
 
-NUM_STEPS = 100
+MAX_EPISODES = 10
 env = gym.make('LunarLander-v2')    # pip install gymnasium[box2d]
 
 m_gtest = RandomAngleTester(env)
@@ -48,21 +48,28 @@ EnvDecorator.decorate(env, m_gtest)
 m_logger = GLogger("lander_log")
 GTestDecorator.decorate_with_logger(m_gtest, m_logger)
 
-# Interact with the environment
-state, info = env.reset()
-for _ in range(NUM_STEPS):
-    action = env.action_space.sample()  # Randomly sample an action
-    next_state, reward, done, truncated, info = env.step(action)
-    #print(f"State: {state}, Action: {action}, Next State: {next_state}, Reward: {reward}, Done: {done}")
-    if done or truncated:
-        state, info = env.reset()
-    else:
-        state = next_state
 
+rewards = []
+for episode_idx in range(MAX_EPISODES):
+    state, info = env.reset()
+    episode_reward = 0
+    done = False
+    truncated = False
+    steps = 0
+    while (not done) and (truncated is False):
+        action = env.action_space.sample()  # Randomly sample an action
+        next_state, reward, done, truncated, _ = env.step(action)
+        episode_reward += reward
+        state = next_state
+    rewards.append(episode_reward)
+    
+    print(f"{episode_idx} Episode Reward: {episode_reward}")
+
+print(f"Average reward: {numpy.mean(rewards)}")
 # Create dataset
 df = m_logger.create_episode_dataset(["angle", "collected_reward"])
-print(df.head())
+print(df.head(n=100))
 df = m_logger.create_step_dataset()
-print(df.head())
+print(df)
 # Delete the database of the logger
-m_logger.delete_database()
+#m_logger.delete_database()

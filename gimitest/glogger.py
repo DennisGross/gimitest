@@ -67,19 +67,19 @@ class GLogger:
         """Stores episode data in the database."""
         with sqlite3.connect(self.db_path) as conn:
             cursor = conn.cursor()
-            episode_data["collected_reward"] = self.collected_reward
+            episode_data["collected_reward"] = float(self.collected_reward)
             try:
                 episode_data["entropy_of_actions"] = self.__calculate_entropy(self.collected_actions)
                 episode_data["number_of_unique_actions"] = len(set(self.collected_actions))
-            except:
-                pass
+            except Exception as e:
+                print("Error in episode storage", e)
             episode_data["number_of_states"] = len(self.collected_actions) + 1
             episode_data["avg_time_per_step"] = self.__average_time_diff(self.times)
             try:
                 cursor.execute("INSERT INTO episodes (id, episode_data) VALUES (?, ?)",
                             (episode, json.dumps(episode_data)))
-            except:
-                pass
+            except Exception as e:
+                print("Error in episode storage", e)
             self.reset_episode_data()
 
     def step_storage(self, episode, step, state, action, next_state, reward, done, truncated, info, step_data, agent_selection):
@@ -221,14 +221,18 @@ class GLogger:
     def create_step_dataset(self, filepath=None, start_episode=0, end_episode=None, start_step=0, end_step=None):
         if end_episode is None:
             end_episode = self.count_episodes()
+        if end_step is None:
+            until_episode_end = True
         data = []
 
         for episode in range(start_episode, end_episode):
-            if end_step is None:
+            if until_episode_end:
                 end_step = self.count_episode_steps(episode)
             for step in range(start_step, end_step):
                 try:
+                    #print(episode, step, end_step)
                     step_dict = self.load_episode_step(episode, step)
+                    #print(step_dict)
                     data.append(step_dict)
                 except Exception as e:
                     print(f"Error in episode {episode}, step {step}: {e}")

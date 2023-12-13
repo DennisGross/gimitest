@@ -40,7 +40,7 @@ class GoalTester(GTest):
 
         return state, action, next_state, reward, terminated, truncated, info
 
-    def pre_reset_configuration(self):
+    def post_reset_configuration(self, next_state):
         # Change speed1 and speed2 in the internal environment variable "channels"
         channels = self.get_attribute(env, "channels")
 
@@ -58,7 +58,7 @@ class GoalTester(GTest):
 
 
 
-NUM_STEPS = 5002 # Default termination after 2500 frames
+MAX_EPISODES = 3
 
 # 0. Create environment
 env = gym.make('MinAtar/Freeway-v1')
@@ -73,16 +73,23 @@ m_logger = GLogger("minitar_freeway")
 # 5. Decorate GoalTester with logger (optional)
 GTestDecorator.decorate_with_logger(m_gtest, m_logger)
 
-# Interact with the environment as usual
-state, info = env.reset()
-for _ in range(NUM_STEPS):
-    action = agent.act(state)  # Randomly sample an action
-    next_state, reward, done, truncated, info = env.step(action)
-    #print(f"State: {state}, Action: {action}, Next State: {next_state}, Reward: {reward}, Done: {done}")
-    if done or truncated:
-        state, info = env.reset()
-    else:
+# Interact with the environment
+rewards = []
+for episode_idx in range(MAX_EPISODES):
+    state, info = env.reset()
+    episode_reward = 0
+    done = False
+    truncated = False
+    steps = 0
+    while (not done) and (truncated is False):
+        action = agent.act(state)
+        next_state, reward, done, truncated, _ = env.step(action)
+        episode_reward += reward
         state = next_state
+    rewards.append(episode_reward)
+    
+    print(f"{episode_idx} Episode Reward: {episode_reward}")
+
 
 # Create dataset
 df = m_logger.create_episode_dataset(["speed1", "speed2", "goal_counter"])
@@ -90,4 +97,4 @@ print(df.head())
 df = m_logger.create_step_dataset()
 print(df.head())
 # Delete the database of the logger
-m_logger.delete_database()
+#m_logger.delete_database()
