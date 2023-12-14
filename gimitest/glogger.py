@@ -10,6 +10,7 @@ import hashlib
 import pandas as pd
 
 
+
 class GLogger:
 
     def __init__(self, db_path):
@@ -43,6 +44,8 @@ class GLogger:
                             info BLOB,
                             step_data BLOB,
                             agent_selection BLOB,
+                            state_hash TEXT,
+                            next_state_hash TEXT,
                             PRIMARY KEY (episode_id, step),
                             FOREIGN KEY (episode_id) REFERENCES episodes(id)
                         )''')
@@ -82,12 +85,20 @@ class GLogger:
                 print("Error in episode storage", e)
             self.reset_episode_data()
 
+
+
     def step_storage(self, episode, step, state, action, next_state, reward, done, truncated, info, step_data, agent_selection):
         current_time = time.time()
         self.times.append(current_time)
         
         with sqlite3.connect(self.db_path) as conn:
             cursor = conn.cursor()
+            try:
+                state_hash = hashlib.sha256(str(state).encode()).hexdigest()
+                next_state_hash = hashlib.sha256(str(next_state).encode()).hexdigest()
+            except Exception as e:
+                state_hash = ""
+                next_state_hash = ""
 
 
             step_data_blob = {
@@ -103,10 +114,10 @@ class GLogger:
             }
 
             cursor.execute("""
-                INSERT INTO steps (episode_id, step, state, action, next_state, reward, done, truncated, info, step_data, agent_selection) 
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                INSERT INTO steps (episode_id, step, state, action, next_state, reward, done, truncated, info, step_data, agent_selection, state_hash, next_state_hash) 
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 """, (
-                    episode, step, pickle.dumps(state), pickle.dumps(action), pickle.dumps(next_state), pickle.dumps(reward), done, truncated, pickle.dumps(info), pickle.dumps(step_data), pickle.dumps(agent_selection)
+                    episode, step, pickle.dumps(state), pickle.dumps(action), pickle.dumps(next_state), pickle.dumps(reward), done, truncated, pickle.dumps(info), pickle.dumps(step_data), pickle.dumps(agent_selection), state_hash, next_state_hash
                 )
             )
 
@@ -135,7 +146,7 @@ class GLogger:
         """Loads and returns the data for a specific step of an episode."""
         with sqlite3.connect(self.db_path) as conn:
             cursor = conn.cursor()
-            cursor.execute("SELECT episode_id, step, state, action, next_state, reward, done, truncated, info, step_data, agent_selection FROM steps WHERE episode_id = ? AND step = ?", (episode, step))
+            cursor.execute("SELECT episode_id, step, state, action, next_state, reward, done, truncated, info, step_data, agent_selection, state_hash, next_state_hash FROM steps WHERE episode_id = ? AND step = ?", (episode, step))
             row = cursor.fetchone()
             if row is None:
                 return None
@@ -151,6 +162,8 @@ class GLogger:
             data_dict["info"] = pickle.loads(row[8])
             data_dict["step_data"] = pickle.loads(row[9])
             data_dict["agent_selection"] = pickle.loads(row[10])
+            data_dict["state_hash"] = row[11]
+            data_dict["next_state_hash"] = row[12]
             return data_dict
 
     def count_episodes(self):
