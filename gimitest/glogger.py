@@ -23,6 +23,13 @@ class GLogger:
         self.old_state = None
 
 
+    def pickle_to_hash_string(self, obj):
+        # To pickle
+        pickled = pickle.dumps(obj)
+        # To hash
+        hashed = hashlib.sha256(pickled).hexdigest()
+        # To string
+        return hashed
     
     def init_db(self):
         """Initializes the SQLite database and creates necessary tables."""
@@ -45,7 +52,9 @@ class GLogger:
                             step_data BLOB,
                             agent_selection BLOB,
                             state_hash TEXT,
+                            action_hash TEXT,
                             next_state_hash TEXT,
+                            reward_hash TEXT,
                             PRIMARY KEY (episode_id, step),
                             FOREIGN KEY (episode_id) REFERENCES episodes(id)
                         )''')
@@ -93,14 +102,11 @@ class GLogger:
         
         with sqlite3.connect(self.db_path) as conn:
             cursor = conn.cursor()
-            try:
-                state_hash = hashlib.sha256(str(state).encode()).hexdigest()
-                next_state_hash = hashlib.sha256(str(next_state).encode()).hexdigest()
-                print(state, next_state)
-            except Exception as e:
-                state_hash = ""
-                next_state_hash = ""
-
+            state_hash = self.pickle_to_hash_string(state)
+            action_hash = self.pickle_to_hash_string(action)
+            next_state_hash = self.pickle_to_hash_string(next_state)
+            reward_hash = self.pickle_to_hash_string(reward)
+    
 
             step_data_blob = {
                 "state": state,
@@ -115,10 +121,10 @@ class GLogger:
             }
 
             cursor.execute("""
-                INSERT INTO steps (episode_id, step, state, action, next_state, reward, done, truncated, info, step_data, agent_selection, state_hash, next_state_hash) 
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                INSERT INTO steps (episode_id, step, state, action, next_state, reward, done, truncated, info, step_data, agent_selection, state_hash, action_hash, next_state_hash, reward_hash) 
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 """, (
-                    episode, step, pickle.dumps(state), pickle.dumps(action), pickle.dumps(next_state), pickle.dumps(reward), done, truncated, pickle.dumps(info), pickle.dumps(step_data), pickle.dumps(agent_selection), state_hash, next_state_hash
+                    episode, step, pickle.dumps(state), pickle.dumps(action), pickle.dumps(next_state), pickle.dumps(reward), done, truncated, pickle.dumps(info), pickle.dumps(step_data), pickle.dumps(agent_selection), state_hash, action_hash, next_state_hash, reward_hash
                 )
             )
 
@@ -147,7 +153,7 @@ class GLogger:
         """Loads and returns the data for a specific step of an episode."""
         with sqlite3.connect(self.db_path) as conn:
             cursor = conn.cursor()
-            cursor.execute("SELECT episode_id, step, state, action, next_state, reward, done, truncated, info, step_data, agent_selection, state_hash, next_state_hash FROM steps WHERE episode_id = ? AND step = ?", (episode, step))
+            cursor.execute("SELECT episode_id, step, state, action, next_state, reward, done, truncated, info, step_data, agent_selection, state_hash, action_hash, next_state_hash, reward_hash FROM steps WHERE episode_id = ? AND step = ?", (episode, step))
             row = cursor.fetchone()
             if row is None:
                 return None
@@ -164,7 +170,9 @@ class GLogger:
             data_dict["step_data"] = pickle.loads(row[9])
             data_dict["agent_selection"] = pickle.loads(row[10])
             data_dict["state_hash"] = row[11]
-            data_dict["next_state_hash"] = row[12]
+            data_dict["action_hash"] = row[12]
+            data_dict["next_state_hash"] = row[13]
+            data_dict["reward_hash"] = row[14]
             return data_dict
 
     def count_episodes(self):
