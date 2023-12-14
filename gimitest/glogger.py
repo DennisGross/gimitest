@@ -96,6 +96,7 @@ class GLogger:
             try:
                 state_hash = hashlib.sha256(str(state).encode()).hexdigest()
                 next_state_hash = hashlib.sha256(str(next_state).encode()).hexdigest()
+                print(state, next_state)
             except Exception as e:
                 state_hash = ""
                 next_state_hash = ""

@@ -33,14 +33,13 @@ class EnvDecorator:
                 original_next_state, original_reward, original_terminated, original_truncated, original_info = env.last()
                 
             gtest.post_step_configuration()
-    
             tmp_next_state = original_next_state
             tmp_reward = original_reward
             tmp_terminated = original_terminated
             tmp_truncated = original_truncated
             tmp_info = original_info
             tmp_state, tmp_action_args, tmp_next_state, tmp_reward, tmp_terminated, tmp_truncated, tmp_info = gtest.post_step_test(env.tmp_storage_of_state, action_args, original_next_state, original_reward, original_terminated, original_truncated, tmp_info, agent_selection)
-            
+            env.tmp_storage_of_state = original_next_state
             return tmp_next_state, tmp_reward, tmp_terminated, tmp_truncated, tmp_info
             
         

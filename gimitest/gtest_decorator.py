@@ -21,6 +21,8 @@ class GTestDecorator:
             # Call the original step function
             original_state, action_args, original_next_state, original_reward, original_terminated, original_truncated, original_info = original_post_step_test(*action_args, **kwargs)
             # Store the step
+            print('====================')
+            print(original_state, original_next_state)
             glogger.own_step_storage(current_episode, current_step, original_state,  action_args, original_next_state, original_reward, original_terminated, original_truncated, original_info, gtest.step_data, agent_selection)
             glogger.step_storage(current_episode, current_step, original_state,  action_args, original_next_state, original_reward, original_terminated, original_truncated, original_info, gtest.step_data, agent_selection)
             # Increment the step
