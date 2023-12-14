@@ -50,6 +50,7 @@ GTestDecorator.decorate_with_logger(m_gtest, m_logger)
 
 
 rewards = []
+
 for episode_idx in range(MAX_EPISODES):
     state, info = env.reset()
     episode_reward = 0

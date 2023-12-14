@@ -8,7 +8,6 @@ from glogger import GLogger
 from gtest_decorator import GTestDecorator
 import random
 
-
 class DummyAgent:
 
     def __init__(self):
@@ -37,6 +36,7 @@ class GoalTester(GTest):
         # It is also possible to handle the agents inside the GoalTester
         self.step_data["Another Random Action"] = self.agents.act(state)
         self.step_data["Q-Values are possible to store here"] = "YES"
+        
 
         return state, action, next_state, reward, terminated, truncated, info
 
