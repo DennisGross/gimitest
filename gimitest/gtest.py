@@ -22,8 +22,6 @@ class GTest:
         return None
     
     def post_step_test(self, state, action, next_state, reward, terminated, truncated, info, agent_selection):
-        print("=====================================")
-        print(state, next_state)
         return state, action, next_state, reward, terminated, truncated, info
     
     def pre_reset_configuration(self):
