@@ -4,13 +4,14 @@ from queue import Queue
 
 class GTest:
 
-    def __init__(self, env, agents = None):
+    def __init__(self, env, agents = None, parameters={}):
         self.env = env
         self.agents = agents
         self.episode = -1
         self.step = 0
         self.step_data = {}
         self.episode_data = {}
+        self.parameters = parameters
 
     def pre_step_configuration(self):
         return None
