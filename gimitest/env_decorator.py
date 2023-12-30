@@ -7,6 +7,7 @@ class EnvDecorator:
         env.tmp_storage_of_state = None
         env.step = EnvDecorator.__decorate_step_function(env, env.step, gtest)
         env.reset = EnvDecorator.__decorate_reset_function(env, env.reset, gtest)
+        gtest.env = env
         return env
 
     @staticmethod

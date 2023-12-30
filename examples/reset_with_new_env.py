@@ -17,8 +17,24 @@ class RandomAngleTester(GTest):
     def __init__(self, env, agent=None):
         super().__init__(env, agent)
 
-    def pre_reset_configuration(self):
-        return None
+    def post_reset_configuration(self, next_state):
+        # Random angle changer
+        angle = random.uniform(-0.5, 0.5)
+        # Update environment state
+        env = self.env.unwrapped
+        print('====================')
+        print("Original State")
+        print(next_state)
+        print('Original Angle', env.lander.angle)
+        env.lander.angle = angle
+        print('Modified Angle', env.lander.angle)
+        # Update next state that is passed to the agent
+        next_state[4] = angle
+        print('State that is now passed to the agent')
+        print(next_state)
+        # Store the angle in the episode data for the logger
+        self.episode_data["aRandomAngleTesterngle"] = angle
+        return next_state
 
 
 
