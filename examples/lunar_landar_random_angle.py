@@ -1,15 +1,12 @@
-import random, numpy, argparse
+import random, numpy
 import gymnasium as gym
 import sys
-sys.path.append('../gimitest')
+sys.path.append('../gimitest/')
 from env_decorator import EnvDecorator
 from gtest import GTest
 from glogger import GLogger
 from gtest_decorator import GTestDecorator
 import random
-import Box2D
-
-
 
 
 class RandomAngleTester(GTest):
@@ -63,7 +60,7 @@ for episode_idx in range(MAX_EPISODES):
         episode_reward += reward
         state = next_state
     rewards.append(episode_reward)
-    
+
     print(f"{episode_idx} Episode Reward: {episode_reward}")
 
 print(f"Average reward: {numpy.mean(rewards)}")
@@ -73,4 +70,4 @@ print(df.head(n=100))
 df = m_logger.create_step_dataset()
 print(df)
 # Delete the database of the logger
-#m_logger.delete_database()
+m_logger.delete_database()
