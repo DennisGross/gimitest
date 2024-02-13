@@ -1,6 +1,7 @@
 import gymnasium as gym
 import numpy as np
 from queue import Queue
+import importlib
 
 class GTest:
 
@@ -45,6 +46,18 @@ class GTest:
         self.step = 0
         self.step_data = {}
         self.episode_data = {}
+
+    def set_module_attribute(self, attribute_name, n_value):
+        env_class = self.env.unwrapped.__class__
+        module_name = env_class.__module__
+        module = importlib.import_module(module_name)
+        setattr(module, attribute_name, n_value)
+        
+    def get_module_attribute(self, attribute_name):
+        env_class = self.env.unwrapped.__class__
+        module_name = env_class.__module__
+        module = importlib.import_module(module_name)
+        return getattr(module, attribute_name)
 
     def __set_breadth_first_attribute(self, root_obj, attribute_name, n_value):
         """Sets the value of attribute attribute_name of the object using breadth-first search.
