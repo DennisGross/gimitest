@@ -3,15 +3,33 @@ import gymnasium as gym  # Importing gymnasium as gym to work as the base for th
 class EnvDecorator:
 
     @staticmethod
+    def check_return_values(func):
+        # Call the function and capture its return value
+        result = func()
+        # Check if the result is a tuple (multiple return values)
+        if isinstance(result, tuple):
+            return len(result)
+        elif result is None:
+            return 0
+        else:
+            # If it's a single value
+            return 1
+       
+
+    @staticmethod
     def decorate(env, gtest):
+        number_of_return_values = EnvDecorator.check_return_values(env.reset)
+        old_style = False
+        if number_of_return_values == 1:
+            old_style = True
         env.tmp_storage_of_state = None
-        env.step = EnvDecorator.__decorate_step_function(env, env.step, gtest)
-        env.reset = EnvDecorator.__decorate_reset_function(env, env.reset, gtest)
+        env.step = EnvDecorator.__decorate_step_function(env, env.step, gtest, old_style)
+        env.reset = EnvDecorator.__decorate_reset_function(env, env.reset, gtest, old_style)
         gtest.env = env
         return env
 
     @staticmethod
-    def __decorate_step_function(env, original_step_function, gtest):
+    def __decorate_step_function(env, original_step_function, gtest, old_style):
         def wrapper(*action_args, **kwargs):
             gtest.pre_step_configuration()
             try:
@@ -28,7 +46,11 @@ class EnvDecorator:
 
             # Call the original step function
             if agent_selection is None:
-                original_next_state, original_reward, original_terminated, original_truncated, original_info = original_step_function(*action_args, **kwargs)
+                if old_style:
+                    original_next_state, original_reward, original_terminated, original_info = original_step_function(*action_args, **kwargs)
+                    original_truncated = False
+                else:
+                    original_next_state, original_reward, original_terminated, original_truncated, original_info = original_step_function(*action_args, **kwargs)
             else:
                 original_step_function(*action_args, **kwargs)
                 original_next_state, original_reward, original_terminated, original_truncated, original_info = env.last()
@@ -47,7 +69,7 @@ class EnvDecorator:
         return wrapper
 
     @staticmethod
-    def __decorate_reset_function(env, original_reset_function, gtest):
+    def __decorate_reset_function(env, original_reset_function, gtest, old_style):
         def wrapper(*args, **kwargs):
             gtest.pre_reset_test()
             more_args = gtest.pre_reset_configuration()
@@ -59,7 +81,11 @@ class EnvDecorator:
 
     
             try:
-                next_state, info = original_reset_function(*args, **kwargs)
+                if old_style:
+                    next_state = original_reset_function(*args, **kwargs)
+                    info = {}
+                else:
+                    next_state, info = original_reset_function(*args, **kwargs)
             except:
                 original_reset_function(*args, **kwargs)
                 next_state, reward, done, truncated, info = env.last()
