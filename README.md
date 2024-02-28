@@ -11,12 +11,15 @@ Install package via:
 pip install git+https://github.com/DennisGross/gimitest.git
 ```
 
-Gimitest allows us to decorate our first environment with **only two extra lines**:
+Gimitest allows us to decorate our first environment with **only a few extra lines**:
 ```
+import gymnasium as gym
+from gimitest.env_decorator import EnvDecorator
+from gimitest.gtest import GTest
 # Create environment
 env = gym.make('CartPole-v1')
 # Create Gimitest object
-m_gtest = GTest()
+m_gtest = GTest(env)
 # Decorate the environment with it
 EnvDecorator.decorate(env, m_gtest)
 # THE REST IS THE SAME...
