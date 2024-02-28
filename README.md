@@ -7,7 +7,9 @@ We use the decorator design pattern to extend the `reset(...)` and `step(...)` m
 ## 🚀 Getting Started
 Install package via:
 
-```pip install git+https://github.com/DennisGross/gimitest.git```
+```
+pip install git+https://github.com/DennisGross/gimitest.git
+```
 
 Gimitest allows us to decorate our first environment with **only two extra lines**:
 ```
