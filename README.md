@@ -63,7 +63,7 @@ GTestDecorator.decorate_with_logger(m_gtest, m_logger)
 If you use Gimitest in your research, please cite the following paper:
 ```
 @misc{GrossGimitest,
-  author = {Gross, Dennis},
+  author = {Dennis Gross, Quentin Mazouni, Helge Spieker},
   title = {{gimitest: A framework for evaluating reinforcement learning agents}},
   year = {2024}
   note = {GitHub repository},
