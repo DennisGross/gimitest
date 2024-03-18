@@ -41,16 +41,29 @@ class GoalTester(GTest):
         return state, action, next_state, reward, terminated, truncated, info
 
     def post_reset_configuration(self, next_state):
+        
         # Change speed1 and speed2 in the internal environment variable "channels"
-        channels = self.get_attribute(env, "channels")
+        channels = self.get_attribute(self.env, "channels")
 
         channels["speed1"] = random.randint(1,6)
         self.episode_data["speed1"] = channels["speed1"]
 
         channels["speed2"] = random.randint(1,6)
         self.episode_data["speed2"] = channels["speed2"]
+        print(self.episode_data)
+        print(self.get_attribute(self.env, "channels"))
 
-        self.set_attribute(env, "channels", channels)
+        # Change position in the internal environment variable "pos"
+        print('====================')
+        print("Original", self.get_attribute(self.env, "pos"))
+        self.set_attribute(self.env, "pos", 0)
+        print("Changed", self.get_attribute(self.env, "pos"))
+        self.set_attribute(self.env, "channels", channels)
+        # TODO: Change returned state to agent next_state
+        print(self.env.game.__dir__())
+        next_state = self.env.game.state()
+        return next_state
+        
 
     def post_reset_test(self):
         # Reset goal counter for new episode

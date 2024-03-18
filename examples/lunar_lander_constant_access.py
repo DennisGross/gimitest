@@ -12,29 +12,17 @@ import Box2D
 
 
 
+
 class RandomAngleTester(GTest):
 
     def __init__(self, env, agent=None):
         super().__init__(env, agent)
+        
 
-    def post_reset_configuration(self, next_state):
-        # Random angle changer
-        angle = random.uniform(-0.5, 0.5)
-        # Update environment state
-        env = self.env.unwrapped
-        print('====================')
-        print("Original State")
-        print(next_state)
-        print('Original Angle', env.lander.angle)
-        env.lander.angle = angle
-        print('Modified Angle', env.lander.angle)
-        # Update next state that is passed to the agent
-        next_state[4] = angle
-        print('State that is now passed to the agent')
-        print(next_state)
-        # Store the angle in the episode data for the logger
-        self.episode_data["aRandomAngleTesterngle"] = angle
-        return next_state
+
+
+
+    
 
 
 
@@ -45,10 +33,12 @@ m_gtest = RandomAngleTester(env)
 EnvDecorator.decorate(env, m_gtest)
 
 
-m_logger = GLogger("lander_log")
-GTestDecorator.decorate_with_logger(m_gtest, m_logger)
 
 
+print(m_gtest.get_module_attribute("FPS"))
+m_gtest.set_module_attribute("FPS", 60)
+print(m_gtest.get_module_attribute("FPS"))
+exit(0)
 rewards = []
 
 for episode_idx in range(MAX_EPISODES):
