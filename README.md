@@ -60,7 +60,7 @@ GTestDecorator.decorate_with_logger(m_gtest, m_logger)
 
 
 ## Citation
-If you use Gimitest in your research, please cite the following paper:
+If you use Gimitest in your research, please cite the following:
 ```
 @misc{GrossGimitest,
   author = {Dennis Gross, Quentin Mazouni, Helge Spieker},
