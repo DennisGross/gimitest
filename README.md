@@ -65,7 +65,7 @@ If you use Gimitest in your research, please cite the following:
 @misc{gimitest,
   author = {Dennis Gross, Quentin Mazouni, Helge Spieker},
   title = {{gimitest: A framework for evaluating reinforcement learning agents}},
-  year = {2024}
+  year = {2024},
   note = {GitHub repository},
   howpublished = {\url{https://github.com/DennisGross/gimitest}}
 }
