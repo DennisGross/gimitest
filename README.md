@@ -57,3 +57,16 @@ Just decorate `GTest` with a `GLogger`:
 m_logger = GLogger("m_log")
 GTestDecorator.decorate_with_logger(m_gtest, m_logger)
 ```
+
+
+## Citation
+If you use Gimitest in your research, please cite the following paper:
+```
+@misc{GrossGimitest,
+  author = {Gross, Dennis},
+  title = {{gimitest: A framework for evaluating reinforcement learning agents}},
+  year = {2024}
+  note = {GitHub repository},
+  howpublished = {\url{https://github.com/DennisGross/gimitest}}
+}
+```
