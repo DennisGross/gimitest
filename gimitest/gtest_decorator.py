@@ -26,7 +26,6 @@ class GTestDecorator:
             glogger.step_storage(current_episode, current_step, original_state,  action_args, original_next_state, original_reward, original_terminated, original_truncated, original_info, gtest.step_data, agent_selection)
             # Increment the step
             gtest.step_increment()
-            print(original_terminated)
             if original_terminated or original_truncated:
                 # Store the episode
                 glogger.own_episode_storage(current_episode, gtest.episode_data, agent_selection)
