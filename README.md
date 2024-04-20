@@ -75,7 +75,7 @@ pip install -r requirements.txt
 
 
 
-## Citation
+## 📜 Citation 
 If you use Gimitest in your research, please cite the following:
 ```
 @misc{gimitest,
