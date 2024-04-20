@@ -134,6 +134,14 @@ class GLogger:
             except:
                 pass
 
+    def delete_episode_step(self, episode, step):
+        """Deletes a specific step from the database."""
+        with sqlite3.connect(self.db_path) as conn:
+            cursor = conn.cursor()
+            cursor.execute("DELETE FROM steps WHERE episode_id = ? AND step = ?", (episode, step))
+        
+        
+
 
     def reset_episode_data(self):
         """Resets the collected data for a new episode."""

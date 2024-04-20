@@ -44,7 +44,7 @@ env = gym.make('LunarLander-v2')    # pip install gymnasium[box2d]
 m_gtest = RandomAngleTester(env)
 
 
-m_logger = GLogger("lander_log")
+m_logger = GLogger("lander_log_reset")
 GTestDecorator.decorate_with_logger(m_gtest, m_logger)
 
 

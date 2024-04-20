@@ -4,7 +4,10 @@ class GTestDecorator:
     def decorate_with_logger(gtest, glogger):
         gtest.post_step_test = GTestDecorator.__decorate_post_step_test(gtest, gtest.post_step_test, glogger)
         gtest.pre_reset_test = GTestDecorator.__decorate_pre_reset_test(gtest, gtest.pre_reset_test, glogger)
+        gtest.step_back = GTestDecorator.__decorate_step_back(gtest, gtest.step_back, glogger)
         return gtest
+    
+
     
     @staticmethod
     def __decorate_post_step_test(gtest, original_post_step_test, glogger):
@@ -42,4 +45,15 @@ class GTestDecorator:
             original_pre_reset_test(*action_args, **kwargs)
             # Increment the episode
             gtest.episode_increment()
+        return wrapper
+    
+    @staticmethod
+    def __decorate_step_back(gtest, original_step_back, glogger):
+        def wrapper(*action_args, **kwargs):
+            # Get current episode and step
+            current_episode = gtest.episode
+            current_step = gtest.step
+            print(current_episode, current_step)
+            original_step_back(*action_args, **kwargs)
+            glogger.delete_episode_step(current_episode, current_step)
         return wrapper

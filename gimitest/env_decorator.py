@@ -31,6 +31,7 @@ class EnvDecorator:
     @staticmethod
     def __decorate_step_function(env, original_step_function, gtest, old_style):
         def wrapper(*action_args, **kwargs):
+            gtest.prepare_step_back()
             gtest.pre_step_configuration()
             try:
                 # Try to get agent selection in turn-based games
@@ -71,6 +72,7 @@ class EnvDecorator:
     @staticmethod
     def __decorate_reset_function(env, original_reset_function, gtest, old_style):
         def wrapper(*args, **kwargs):
+            gtest.prepare_step_back()
             gtest.pre_reset_test()
             more_args = gtest.pre_reset_configuration()
             # Check if more_args is instance
