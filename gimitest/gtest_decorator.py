@@ -17,6 +17,8 @@ class GTestDecorator:
             except:
                 # If not possible, set to None
                 agent_selection = None
+            
+            glogger.agent_selection = agent_selection
 
             # Call the original step function
             original_state, action_args, original_next_state, original_reward, original_terminated, original_truncated, original_info = original_post_step_test(*action_args, **kwargs)
@@ -38,6 +40,9 @@ class GTestDecorator:
     @staticmethod
     def __decorate_pre_reset_test(gtest, original_pre_reset_test, glogger):
         def wrapper(*action_args, **kwargs):
+            if gtest.episode != -1:
+                glogger.own_episode_storage(gtest.episode, gtest.episode_data, glogger.agent_selection)
+                glogger.episode_storage(gtest.episode, gtest.episode_data, glogger.agent_selection)
             # Call the original step function
             original_pre_reset_test(*action_args, **kwargs)
             # Increment the episode

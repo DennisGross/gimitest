@@ -194,3 +194,6 @@ class GTest:
             return attr_value
         else:
             raise AttributeError(f"Attribute {attribute_name} does not exist in environment.")
+
+    def clean_up(self):
+        self.env.reset()

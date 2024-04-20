@@ -38,7 +38,7 @@ class RandomAngleTester(GTest):
 
 
 
-MAX_EPISODES = 10
+MAX_EPISODES = 3
 env = gym.make('LunarLander-v2')    # pip install gymnasium[box2d]
 
 m_gtest = RandomAngleTester(env)
@@ -71,6 +71,7 @@ for episode_idx in range(MAX_EPISODES):
     
     print(f"{episode_idx} Episode Reward: {episode_reward}")
 
+m_gtest.clean_up()
 print(f"Average reward: {numpy.mean(rewards)}")
 # Create dataset
 df = m_logger.create_episode_dataset(["angle", "collected_reward"])
