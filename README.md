@@ -58,6 +58,22 @@ m_logger = GLogger("m_log")
 GTestDecorator.decorate_with_logger(m_gtest, m_logger)
 ```
 
+## Modifications
+If you want to modify Gimitest, please follow the steps below:
+
+1. Clone the repository:
+```
+git clone https://github.com/DennisGross/gimitest.git
+```
+
+2. Install the requirements:
+```
+pip install -r requirements.txt
+```
+
+3. Modify the code as you wish.
+
+
 
 ## Citation
 If you use Gimitest in your research, please cite the following:
