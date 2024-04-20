@@ -5,38 +5,7 @@ import importlib
 import copy
 import inspect
 
-def has_method(obj, method_name):
-    """
-    Recursively checks if an object or any of its wrappers has a method called `method_name`.
-    
-    Args:
-    obj (object): The object to inspect.
-    method_name (str): The name of the method to look for.
-    
-    Returns:
-    bool: True if the method exists, False otherwise.
-    """
-    # Base check for the method in the current object
-    if method_name in dir(obj):
-        return True
-    
-    # If the object is a class or a function, check its members
-    if inspect.isclass(obj) or inspect.isfunction(obj):
-        members = inspect.getmembers(obj)
-        for name, member in members:
-            if has_method(member, method_name):
-                return True
-    
-    # Attempt to unwrap the object if it seems to be a wrapper
-    # Typical wrapper attributes to check could include _wrapped, __wrapped__, _obj, etc.
-    wrapper_attributes = ['__wrapped__', '_wrapped', '_obj']
-    for attr in wrapper_attributes:
-        if hasattr(obj, attr):
-            wrapped_obj = getattr(obj, attr)
-            if has_method(wrapped_obj, method_name):
-                return True
-    
-    return False
+
 
 class GTest:
 
@@ -48,31 +17,6 @@ class GTest:
         self.step_data = {}
         self.episode_data = {}
         self.parameters = parameters
-        self.step_back_possible = has_method(self.env, "step_back")
-        self.step_back_prepared = False
-
-
-    def prepare_step_back(self):
-        if self.step_back_possible:
-            self.old_episode = self.episode
-            self.old_step = self.step
-            self.old_step_data = copy.deepcopy(self.step_data)
-            self.old_episode_data = copy.deepcopy(self.episode_data)
-            self.step_back_prepared = True
-       
-        
-    def step_back(self):
-        if self.step_back_possible:
-            if not self.step_back_prepared:
-                raise Exception("Prepare step back before calling step back.")
-            self.env.step_back()
-            self.episode = self.old_episode
-            self.step = self.old_step
-            self.step_data = self.old_step_data
-            self.episode_data = self.old_episode_data
-            self.step_back_prepared = False
-        else:
-            raise Exception("Set step_back_possible to True in the constructor of GTest.")
 
 
     def pre_step_configuration(self):

@@ -32,7 +32,7 @@ The `step(...)`-wrapping first executes the `pre_step_configuration(...)` method
 
 The `reset(...)`-wrapping first executes the `pre_reset_test(...)` method, then the `pre_reset_configuration(...)` method, then the original `reset(...)` method, then the `post_reset_test(...)` method, and finally the `post_reset_configuration(...)` method.
 
-#### Configuration Methods
+### Configuration Methods
 The configuration methods allow us to override the way how your `GTest` can modify the environment. For instance, changing the gravity or cart mass in the ccartpole environment at different times (pre/post/reset/step):
 - `pre_step_configuration(...)`
 - `post_step_configuration(...)`
@@ -43,12 +43,13 @@ To access internal environment parameters, we can use the `original_env = env.un
 However, sometims this does not work and Gimitest allows via `get_attribute(...)` and `set_attribute(...)` to modify internal environment parameters, too.
 
 
-#### Testing Methods
+### Testing Methods
 The testing methods allow us to create specific tests at different times (pre/post/reset/step):
 - `pre_step_test(...)`
 - `post_step_test(...)`
 - `pre_reset_test(...)`
 - `post_reset_test(...)`
+
 
 ## 📊 GLogger
 `GLogger` allows us to log the whole testing process at every point in time.

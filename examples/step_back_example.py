@@ -14,6 +14,7 @@ class SimpleEnv(gym.Env):
         self.state = 0
         self.action_space = gym.spaces.Discrete(1)
         self.observation_space = gym.spaces.Discrete(1)
+
     def reset(self):
         self.state = 0
         return self.state
@@ -40,9 +41,25 @@ print("Before step")
 print(env.state)
 print(m_gtest.env.unwrapped.state)
 env.step(0)
+env.step(0)
 print("After step")
 print(env.state)
 print(m_gtest.env.unwrapped.state)
+m_gtest.step_back()
+#m_gtest.step_back()
+print("After step back")
+print(env.state)
+print(m_gtest.env.unwrapped.state)
+env.reset()
+print("After reset!!!!!!!!!!!!!")
+print(env.state)
+print(m_gtest.env.unwrapped.state)
+env.step(0)
+env.step(0)
+print("After step")
+print(env.state)
+print(m_gtest.env.unwrapped.state)
+m_gtest.step_back()
 m_gtest.step_back()
 print("After step back")
 print(env.state)
