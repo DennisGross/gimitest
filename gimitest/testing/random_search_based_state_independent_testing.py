@@ -1,4 +1,4 @@
-from gtest import GTest
+from gimitest.gtest import GTest
 import random
 
 class RandomSearchBasedStateIndependentTesting(GTest):
