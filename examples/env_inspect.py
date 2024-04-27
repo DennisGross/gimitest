@@ -13,8 +13,6 @@ if __name__ == "__main__":
     print("Given")
     print("Environment source code:")
     print(get_environment_source(env))
-    print("Non callable attributes:")
-    print(get_non_callable_attributes(env))
     print("Formulate me test cases to test a trained RL agent in this environment")
     print("Write it precisely and clearly")
     try:
@@ -23,3 +21,7 @@ if __name__ == "__main__":
     except Exception as e:
         print(e)
         print("Install gimitest to get the full module code")
+    print("Non callable attributes:")
+    print(get_non_callable_attributes(env))
+    print("Int, float, and bool attributes:")
+    print(get_int_float_bool_attributes(env))

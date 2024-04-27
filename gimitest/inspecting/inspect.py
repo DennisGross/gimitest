@@ -53,6 +53,35 @@ def get_non_callable_attributes(env):
     
     return non_callable_attrs
 
+def get_int_float_bool_attributes(env):    
+    # Check if the environment is an instance of a Gym environment
+    if not isinstance(env, gym.Env):
+        raise TypeError("Provided object is not a Gym environment.")
+
+    try:
+        env = env.unwrapped  # Unwrap the environment if possible
+    except AttributeError as e:
+        print(f"Error unwrapping environment: {e}")
+
+    # Retrieve all attributes and methods of the environment instance
+    attributes = dir(env)
+    
+    # Initialize a list to hold the names of non-callable attributes that are bool, float, or int
+    specific_type_attrs = []
+    
+    # Iterate over the attribute names
+    for attr in attributes:
+        try:
+            attr_value = getattr(env, attr)
+            # Check if the attribute is not callable and is of type bool, float, or int
+            if not callable(attr_value) and isinstance(attr_value, (bool, float, int)):
+                specific_type_attrs.append(attr)
+        except Exception as e:
+            pass  # Ignore exceptions in accessing attributes
+    
+    return specific_type_attrs
+
+
 
 
 def get_full_module_code(module, exclude_files=[], include_files=[]):
