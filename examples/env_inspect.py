@@ -8,7 +8,7 @@ from inspecting.inspect import *
 # Example usage:
 if __name__ == "__main__":
     # Create an instance of a specific Gym environment
-    env = gym.make('LunarLander-v2')
+    env = gym.make('CartPole-v1')
     # Print the source code of the environment
     print("Given")
     print("Environment source code:")
@@ -22,6 +22,10 @@ if __name__ == "__main__":
         print(e)
         print("Install gimitest to get the full module code")
     print("Non callable attributes:")
-    print(get_non_callable_attributes(env))
+    print(get_environment_attributes(env, include_values=False))
     print("Int, float, and bool attributes:")
-    print(get_int_float_bool_attributes(env))
+    print(get_environment_attributes(env, types=(int, float, bool), include_values=False))
+    print("All attributes with inital values:")
+    print(get_environment_attributes(env, include_values=True))
+    print("Int, float, and bool attributes with inital values:")
+    print(get_environment_attributes(env, types=(int, float, bool), include_values=True))

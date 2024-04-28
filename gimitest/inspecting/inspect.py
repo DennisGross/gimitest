@@ -5,6 +5,19 @@ import pkgutil
 import importlib
 
 def get_environment_source(env):
+    """Retrieves the source code of the class for a given gym environment.
+
+    This function checks if the provided object is an instance of gym.Env, unwraps it if possible, and then retrieves and returns the source code of the environment's class.
+
+    Args:
+        env (gym.Env): The gym environment instance whose source code is to be retrieved.
+
+    Returns:
+        str: The source code of the environment's class, or an empty string if an error occurs.
+
+    Raises:
+        TypeError: If the provided object is not a Gym environment.
+    """
     # Check if the environment is an instance of a Gym environment
     if not isinstance(env, gym.Env):
         raise TypeError("Provided object is not a Gym environment.")
@@ -24,36 +37,21 @@ def get_environment_source(env):
         return ""
     
 
+def get_environment_attributes(env, types=(object), include_values=False):
+    """Retrieves attributes from a gym environment that match specified types,
+    optionally including their initial values.
 
-def get_non_callable_attributes(env):
-    # Check if the environment is an instance of a Gym environment
-    if not isinstance(env, gym.Env):
-        raise TypeError("Provided object is not a Gym environment.")
-    try:
-        env = env.unwrapped
-    except AttributeError as e:
-        print(f"Error unwrapping environment: {e}")
-        pass
-    # Retrieve all attributes and methods of the environment instance
-    attributes = dir(env)
-    
-    # Initialize a list to hold the names of non-callable attributes
-    non_callable_attrs = []
-    
-    # Iterate over the attribute names
-    for attr in attributes:
-        # Get the attribute value
-        try:
-            attr_value = getattr(env, attr)
-            # Check if the attribute is not callable
-            if not callable(attr_value):
-                non_callable_attrs.append(attr)
-        except Exception as e:
-            pass
-    
-    return non_callable_attrs
+    Args:
+        env (gym.Env): An instance of a gym environment from which attributes are to be retrieved.
+        types (tuple): A tuple of data types to filter the attributes by. Defaults to (object).
+        include_values (bool): If True, returns a dictionary with attribute names and their values; otherwise, returns a list of attribute names.
 
-def get_int_float_bool_attributes(env):    
+    Returns:
+        dict or list: Depending on 'include_values', a dictionary with attribute names and their values or a list of attribute names.
+
+    Raises:
+        TypeError: If the provided object is not a Gym environment.
+    """
     # Check if the environment is an instance of a Gym environment
     if not isinstance(env, gym.Env):
         raise TypeError("Provided object is not a Gym environment.")
@@ -63,35 +61,43 @@ def get_int_float_bool_attributes(env):
     except AttributeError as e:
         print(f"Error unwrapping environment: {e}")
 
-    # Retrieve all attributes and methods of the environment instance
+    # Retrieve all attributes of the environment instance
     attributes = dir(env)
-    
-    # Initialize a list to hold the names of non-callable attributes that are bool, float, or int
-    specific_type_attrs = []
-    
+
+    # Initialize a collection to hold the output
+    attr_collection = {} if include_values else []
+
     # Iterate over the attribute names
     for attr in attributes:
         try:
             attr_value = getattr(env, attr)
-            # Check if the attribute is not callable and is of type bool, float, or int
-            if not callable(attr_value) and isinstance(attr_value, (bool, float, int)):
-                specific_type_attrs.append(attr)
-        except Exception as e:
+            # Check if the attribute is not callable and matches one of the specified types
+            if not callable(attr_value) and isinstance(attr_value, types):
+                if include_values:
+                    attr_collection[attr] = attr_value
+                else:
+                    attr_collection.append(attr)
+        except Exception:
             pass  # Ignore exceptions in accessing attributes
-    
-    return specific_type_attrs
 
-
-
+    return attr_collection
 
 def get_full_module_code(module, exclude_files=[], include_files=[]):
-    """ Returns the source code for the specified module and all its submodules,
-        optionally excluding files specified in exclude_files or including only files in include_files.
+    """Returns the source code for the specified module and all its submodules,
+    optionally excluding or including specific files.
+
+    Args:
+        module (Module): The root module from which source code is to be extracted.
+        exclude_files (list): A list of substrings that, if present in a module's file path, will exclude it from being included.
+        include_files (list): A list of substrings that, if present in a module's file path, ensure its inclusion.
+
+    Returns:
+        str: All collected source code from the module and its submodules.
     """
     source_code = ""
     
     def retrieve_module_code(mod):
-        """ Helper to retrieve module source and append to the main source_code variable. """
+        """Helper function to retrieve module source and append to the main source_code variable."""
         nonlocal source_code
         try:
             module_file = getattr(mod, '__file__', '')
@@ -128,6 +134,3 @@ def get_full_module_code(module, exclude_files=[], include_files=[]):
                     pass
     
     return source_code
-
-
-
