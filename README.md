@@ -55,6 +55,7 @@ The testing methods allow us to create specific tests at different times (pre/po
 `GLogger` allows us to log the whole testing process at every point in time.
 Just decorate `GTest` with a `GLogger`:
 ```
+from gimitest.glogger import GLogger
 m_logger = GLogger("m_log")
 GTestDecorator.decorate_with_logger(m_gtest, m_logger)
 ```
