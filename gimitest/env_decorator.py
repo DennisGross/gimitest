@@ -42,7 +42,9 @@ class EnvDecorator:
             # Makes it possible to test, for instance, alternative actions
             action = gtest.pre_step_test( agent_selection, action_args[0])
             if action is not None:
+                action_args = list(action_args)
                 action_args[0] = action
+                action_args = tuple(action_args)
 
             # Call the original step function
             if agent_selection is None:
