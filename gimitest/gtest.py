@@ -5,8 +5,6 @@ import importlib
 import copy
 import inspect
 
-
-
 class GTest:
 
     def __init__(self, env, agents = None, parameters={}):
@@ -18,6 +16,7 @@ class GTest:
         self.episode_data = {}
         self.parameters = parameters
         self.current_image = None
+        self.decorated = True
 
 
     def pre_step_configuration(self):
