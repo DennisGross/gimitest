@@ -1,5 +1,6 @@
 import gymnasium as gym  # Importing gymnasium as gym to work as the base for the decorator
-
+from PIL import Image
+import numpy as np
 class EnvDecorator:
 
     @staticmethod
@@ -25,6 +26,7 @@ class EnvDecorator:
         env.tmp_storage_of_state = None
         env.step = EnvDecorator.__decorate_step_function(env, env.step, gtest, old_style)
         env.reset = EnvDecorator.__decorate_reset_function(env, env.reset, gtest, old_style)
+        env.render = EnvDecorator.__decorate_render_function(env, env.render, gtest)
         gtest.env = env
         return env
 
@@ -107,4 +109,18 @@ class EnvDecorator:
             return env.tmp_storage_of_state, info
         return wrapper
 
-    
+    @staticmethod
+    def __decorate_render_function(env, original_render_function, gtest):
+        def wrapper(*args, **kwargs):
+            # Call the original render function and get the image
+            render_result = original_render_function(*args, **kwargs)
+            
+            if isinstance(render_result, np.ndarray):
+                # If the render result is a numpy array, convert it to a PIL Image
+                gtest.current_image = Image.fromarray(render_result)
+
+            gtest.post_render()
+
+            return render_result
+            
+        return wrapper

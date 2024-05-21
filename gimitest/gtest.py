@@ -17,6 +17,7 @@ class GTest:
         self.step_data = {}
         self.episode_data = {}
         self.parameters = parameters
+        self.current_image = None
 
 
     def pre_step_configuration(self):
@@ -41,6 +42,9 @@ class GTest:
         return None
     
     def post_reset_test(self):
+        return None
+    
+    def post_render(self):
         return None
 
     def step_increment(self):
