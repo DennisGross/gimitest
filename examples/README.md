@@ -63,12 +63,9 @@ The policies were trained via stablebaselines3, and the models are available in 
 
 The script is a modified version from (parallel setting during eval): [https://pettingzoo.farama.org/tutorials/sb3/waterworld/](https://pettingzoo.farama.org/tutorials/sb3/waterworld/)
 
-## Plotting the results
-The results of any experiment can be plotted as in the paper with the scripts *plot_results.py*.
-Remind to change the paths of the log files if needed.
-
 ## Automated Testing with LLMs
 This experiment uses the OpenAI GPT model gpt-4-turbo to analyze the Gymnasium environment source code to generate own test cases.
+In this experiment, we use the Catpole environment.
 This experiment's goal is to show the potential of GPT models in automated testing of reinforcement learning environments.
 To run the experiment, please use an own API key, copy the code outside the repository, install gimitest and run the script.
 First, it extract essential parameters for testing from the environment source code.
@@ -76,3 +73,18 @@ Then, it founds the domain intervals for the parameters.
 Afterwards, it generates test cases for the environment.
 Then, it runs the test cases and logs the results.
 Finally, analyze the results.
+
+## Explaining Failed Tests
+This experiment uses the OpenAI GPT model gpt-4-turbo to explain failed tests via the last screen image of the Gymnasium environment.
+In this experiment, we use the Catpole environment.
+This experiment's goal is to show the potential of GPT models in explaining failed tests in reinforcement learning environments.
+To run the experiment, please use an own API key, go into explaining_failed_tests and run explain.py.
+First, it extracts the last screen image of the failed test.
+Then, it generates an explanation for the failed test.
+
+## Plotting the results
+The results of any experiment can be plotted as in the paper with the scripts *plot_results.py*.
+Remind to change the paths of the log files if needed.
+
+
+
