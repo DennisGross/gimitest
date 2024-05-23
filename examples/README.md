@@ -51,9 +51,17 @@ We unrelax the states by increasing the absolute value of the pole' angle.
 ## TMARL Testing
 TMARL (Turn-Based Multi-Agent Reinforcement Learning) testing is a specialized application of Gimitest, designed to evaluate the performance of agents in turn-based multi-agent environments. In this testing framework, we focus on the classic game of Connect Four. The objective is to assess the agent's capability to secure a win against a randomly behaving opponent. To achieve this, the agent is tested from various initial board states to determine its probability of winning.
 
+The policies were trained via stablebaselines3, and the models are available in the models folder. The testing script is available in the tmarl folder. To run the script, navigate to the tmarl folder and execute the command `python connect_four.py`.
 
-## CMARL Testing
-CMARL (Concurrent Multi-Agent Reinforcement Learning) testing represents another distinct application of Gimitest, aimed at evaluating agents in concurrent multi-agent environments. For this testing, we use the Waterworld environment, where agents operate simultaneously in a shared space. The evaluation involves testing the agents' performance with varying numbers of evaders (targets the agent needs to capture) and poisons (hazardous elements the agent must avoid). 
+Environment source code: [Connect Four](https://pettingzoo.farama.org/environments/classic/connect_four/)
+
+
+## PMARL Testing
+PMARL (Parallel Multi-Agent Reinforcement Learning) testing represents another distinct application of Gimitest, aimed at evaluating agents in parallel multi-agent environments. For this testing, we use the Waterworld environment, where agents operate simultaneously in a shared space. The evaluation involves testing the agents' performance with varying numbers of evaders (targets the agent needs to capture) and poisons (hazardous elements the agent must avoid). 
+
+The policies were trained via stablebaselines3, and the models are available in the models folder. The testing script is available in the pmarl folder. To run the script, navigate to the pmarl folder and execute the command `python waterworld.py`.
+
+The script is a modified version from (parallel setting during eval): [https://pettingzoo.farama.org/tutorials/sb3/waterworld/](https://pettingzoo.farama.org/tutorials/sb3/waterworld/)
 
 ## Plotting the results
 The results of any experiment can be plotted as in the paper with the scripts *plot_results.py*.

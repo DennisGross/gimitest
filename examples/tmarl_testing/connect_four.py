@@ -1,3 +1,12 @@
+"""
+Modified version of Elliot's scripts from https://pettingzoo.farama.org/tutorials/sb3
+Uses Stable-Baselines3 to train agents.
+
+
+For more information, see, for instance: https://stable-baselines3.readthedocs.io/en/master/modules/ppo.html
+
+Author: Elliot (https://github.com/elliottower)
+"""
 import glob
 import os
 import time
