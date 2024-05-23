@@ -84,14 +84,16 @@ class GLogger:
                 episode_data["entropy_of_actions"] = self.__calculate_entropy(self.collected_actions)
                 episode_data["number_of_unique_actions"] = len(set(self.collected_actions))
             except Exception as e:
-                print("Error in episode storage", e)
+                pass
+                #print("Error in episode storage", e)
             episode_data["number_of_states"] = len(self.collected_actions) + 1
             episode_data["avg_time_per_step"] = self.__average_time_diff(self.times)
             try:
                 cursor.execute("INSERT INTO episodes (id, episode_data) VALUES (?, ?)",
                             (episode, json.dumps(episode_data)))
             except Exception as e:
-                print("Error in episode storage", e)
+                pass
+                #print("Error in episode storage", e)
             self.reset_episode_data()
 
 
@@ -119,7 +121,21 @@ class GLogger:
                 "custom_data": step_data,
                 "agent_selection": agent_selection
             }
-
+            # Check if reward is from type defaultdict
+            try:
+                # Sum up all rewards
+                reward = sum(reward.values())
+            except:
+                pass
+            # Check if all dones are True
+            try:
+                done = all(done.values())
+            except:
+                pass
+            try:
+                truncated = all(truncated.values())
+            except:
+                pass
             cursor.execute("""
                 INSERT INTO steps (episode_id, step, state, action, next_state, reward, done, truncated, info, step_data, agent_selection, state_hash, action_hash, next_state_hash, reward_hash) 
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)

@@ -41,14 +41,22 @@ To run the demonstration, naviguate to `at/` and run `python fgsm_attacks.py`.
 
 ## Metamorphic Testing
 
-Finally, we apply metamorphic testing with Gimitest.
+We apply metamorphic testing with Gimitest.
 We follow the approach proposed by [Eniser et al. \[2022\]](https://dl.acm.org/doi/abs/10.1145/3533767.3534392), where we look for *bugs* in the decision model.
 *Bugs* are scenarios solved but the agent for which *simpler* versions however cause failures.
 Finding those bugs require to define un/relaxation operations, that depend on the environment considered.
 For this demonstration, we use the [Cart Pole environment](https://gymnasium.farama.org/environments/classic_control/cart_pole/).
 We unrelax the states by increasing the absolute value of the pole' angle.
 
+## TMARL Testing
+TMARL (Turn-Based Multi-Agent Reinforcement Learning) testing is a specialized application of Gimitest, designed to evaluate the performance of agents in turn-based multi-agent environments. In this testing framework, we focus on the classic game of Connect Four. The objective is to assess the agent's capability to secure a win against a randomly behaving opponent. To achieve this, the agent is tested from various initial board states to determine its probability of winning.
+
+
+## CMARL Testing
+CMARL (Concurrent Multi-Agent Reinforcement Learning) testing represents another distinct application of Gimitest, aimed at evaluating agents in concurrent multi-agent environments. For this testing, we use the Waterworld environment, where agents operate simultaneously in a shared space. The evaluation involves testing the agents' performance with varying numbers of evaders (targets the agent needs to capture) and poisons (hazardous elements the agent must avoid). 
+
 ## Plotting the results
 
 The results of any experiment can be plotted as in the paper with the scripts *plot_results.py*.
 Remind to change the paths of the log files if needed.
+
