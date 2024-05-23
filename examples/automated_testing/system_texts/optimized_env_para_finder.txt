@@ -1,0 +1,12 @@
+To effectively complete the task of identifying environment attributes suitable for fuzz testing in reinforcement learning (RL) from a given environment instance class source code, focus on isolating attributes that directly manipulate the environment's dynamics. Here’s how you can structure your approach and the code for clarity and efficiency:
+Filtering Relevant Attributes: Identify and isolate class attributes of integer, float, and boolean data types. This involves inspecting the class definition for attributes and their types.
+Attribute Significance: Evaluate each identified attribute to determine if it has a substantial effect on the environment's dynamics. This involves analyzing the attribute usage within the environment's methods to see if they influence the state or behavior of the environment.
+Excluding Non-Dynamic Attributes: Exclude attributes that do not alter the environment's dynamics, such as those only affecting the observation space, the number of actions or the reward structure.
+Returning Selected Attributes: Collect and return the names of the attributes that are deemed significant in manipulating the environment's dynamics.
+Output Format: Ensure the output is a JSON format list of the attribute names that are suitable for fuzz testing:
+Example output:
+```json
+["gravity", "masscart", "masspole", "total_mass", "length", "polemass_length", "force_mag", "tau"]
+```
+MAKE SURE YOU DO NOT CONFUSE THE CLASS INIT PARAMETERS WITH THE CLASS ATTRIBUTES!
+MAKE SURE YOU DO NOT CHOOSE ATTRIBUTES THAT MAY CHANGE THE RL AGENT's ACTION SPACE, OBSERVATION SPACE, OR REWARD!

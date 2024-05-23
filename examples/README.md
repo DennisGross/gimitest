@@ -56,7 +56,15 @@ TMARL (Turn-Based Multi-Agent Reinforcement Learning) testing is a specialized a
 CMARL (Concurrent Multi-Agent Reinforcement Learning) testing represents another distinct application of Gimitest, aimed at evaluating agents in concurrent multi-agent environments. For this testing, we use the Waterworld environment, where agents operate simultaneously in a shared space. The evaluation involves testing the agents' performance with varying numbers of evaders (targets the agent needs to capture) and poisons (hazardous elements the agent must avoid). 
 
 ## Plotting the results
-
 The results of any experiment can be plotted as in the paper with the scripts *plot_results.py*.
 Remind to change the paths of the log files if needed.
 
+## Automated Testing with LLMs
+This experiment uses the OpenAI GPT model gpt-4-turbo to analyze the Gymnasium environment source code to generate own test cases.
+This experiment's goal is to show the potential of GPT models in automated testing of reinforcement learning environments.
+To run the experiment, please use an own API key, copy the code outside the repository, install gimitest and run the script.
+First, it extract essential parameters for testing from the environment source code.
+Then, it founds the domain intervals for the parameters.
+Afterwards, it generates test cases for the environment.
+Then, it runs the test cases and logs the results.
+Finally, analyze the results.

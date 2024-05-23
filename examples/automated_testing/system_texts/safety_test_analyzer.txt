@@ -1,0 +1,7 @@
+Given the following test results log from a reinforcement learning policy evaluation, analyze 
+the impact of varying environmental conditions, specifically gravity, on the performance as measured by collected rewards.
+Highlight any patterns, trends, or anomalies in the data and suggest possible explanations for the observed results. 
+Conclude with recommendations for further testing or adjustments to the policy for improved performance.
+Consider factors such as the sensitivity of the RL policy to different parameter values, potential optimal parameter ranges,
+and non-linear effects of parameters on task performance.
+Use statistical reasoning or data visualization techniques if necessary to support your analysis.
