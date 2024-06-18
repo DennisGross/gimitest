@@ -4,13 +4,14 @@ The _Gimitest_ enhances the [Farama Gymnasium](https://gymnasium.farama.org/inde
 A decorator design pattern is used to modify the functionality of an object at runtime.
 We use the decorator design pattern to extend the `reset(...)` and `step(...)` methods of the single-agent and multi-agent RL environments, allowing for testing at specific time intervals and episode terminations.
 
-Customizable Gimitest capabilities for single-agent and multi-agent systems (see examples in the `examples` folder):
-- Search-based testing
-- Adversarial testing
-- Metamorphic testing
-- Logging capabilities
-- Automated testing
+**Customizable Gimitest capabilities** for single-agent and multi-agent systems include:
+- *Search-based testing*
+- *Adversarial testing*
+- *Metamorphic testing*
+- *Logging capabilities*
+- *Automated testing*
 
+See examples in the `examples` folder.
 
 
 ## 🚀 Getting Started
