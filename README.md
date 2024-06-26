@@ -12,6 +12,7 @@ We use the decorator design pattern to extend the `reset(...)` and `step(...)` m
 - *Automated testing*
 
 See examples in the `examples` folder.
+Watch the [video](https://youtu.be/9WiWZyrUhLw) for a quick demonstration.
 
 
 ## 🚀 Getting Started
