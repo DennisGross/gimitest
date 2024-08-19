@@ -21,6 +21,7 @@ class GLogger:
         self.collected_actions = []
         self.times = []
         self.old_state = None
+        self.agent_selection = None
 
 
     def pickle_to_hash_string(self, obj):
