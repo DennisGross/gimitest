@@ -1,4 +1,3 @@
-box2d-py==2.3.5
 cloudpickle==3.0.0
 contourpy==1.2.0
 cycler==0.12.1
