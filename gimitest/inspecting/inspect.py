@@ -134,3 +134,28 @@ def get_full_module_code(module, exclude_files=[], include_files=[]):
                     pass
     
     return source_code
+
+
+def find_function_path(obj, func_name, current_path=""):
+    """
+    Recursively searches for a function by name in an object and returns the object-path to it.
+
+    :param obj: The object to search within.
+    :param func_name: The name of the function to search for.
+    :param current_path: The current path in the object (used for recursion).
+    :return: The object-path to the function, or None if not found.
+    """
+    # Check if the object has the function as an attribute
+    if hasattr(obj, func_name) and callable(getattr(obj, func_name)):
+        return f"{current_path}.{func_name}".strip(".")
+    
+    # Recursively search the object's attributes
+    for attr_name in dir(obj):
+        attr = getattr(obj, attr_name)
+        # Skip built-in attributes and non-object types
+        if not attr_name.startswith('__') and hasattr(attr, '__dict__'):
+            result = find_function_path(attr, func_name, f"{current_path}.{attr_name}".strip("."))
+            if result:
+                return result
+
+    return None
