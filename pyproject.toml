@@ -1,0 +1,52 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "gimitest"
+authors = [
+  { name="Gross Dennis", email="dennis@simula.no" },
+  { name="Mazouni Quentin", email="quentin@simula.no" },
+  { name="Spieker Helge", email="helge@simula.no" }
+]
+version = "1.0"
+description = "A flexible framework for evaluating reinforcement learning agents in Farama Gymnasium and PettingZoo environments."
+readme = "README.md"
+license = { text="MIT" }
+requires-python = ">=3.10"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+]
+dependencies = [
+    "gymnasium==0.29.1",
+    "numpy<2.0",
+    "matplotlib",
+    "cloudpickle",
+    "contourpy",
+    "cycler",
+    "Farama-Notifications",
+    "fonttools",
+    "kiwisolver",
+    "packaging",
+    "pandas",
+    "Pillow",
+    "pyparsing",
+    "python-dateutil",
+    "pytz",
+    "scipy",
+    "seaborn",
+    "six",
+    "typing_extensions",
+    "tzdata",
+]
+
+[project.urls]
+"Homepage" = "https://github.com/DennisGross/gimitest"
+
+[project.optional-dependencies]
+dev = [
+    "swig",
+    "gymnasium[box2d]",
+    "MinAtar",
+]
