@@ -1,0 +1,23 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it using these metadata."
+title: gimitest
+abstract: "Gimitest is a tool for testing reinforcement learning agents in Farama Gymnasium, PettingZoo, and similar framework environments. It streamlines testing by extending reset() and step() methods, and supports customizable test cases and configurations."
+type: software
+authors:
+  - family-names: "Gross"
+    given-names: "Dennis"
+  - family-names: "Mazouni"
+    given-names: "Quentin"
+    orcid: "https://orcid.org/0009-0003-3519-5514"
+  - family-names: "Spieker"
+    given-names: "Helge"
+    orcid: "https://orcid.org/0000-0003-2494-4279"
+version: 1.0
+date-released: "2025-05-12"
+license: MIT
+repository-code: "https://github.com/DennisGross/gimitest"
+keywords:
+  - Reinforcement Learning
+  - Software Testing
+  - Tool
+  - Farama Gymnasium
