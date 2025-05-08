@@ -1,6 +1,6 @@
 cff-version: 1.2.0
 message: "If you use this software, please cite it using these metadata."
-title: gimitest
+title: Gimitest: A Comprehensive Tool for Testing Reinforcement Learning Policies
 abstract: "Gimitest is a tool for testing reinforcement learning agents in Farama Gymnasium, PettingZoo, and similar framework environments. It streamlines testing by extending reset() and step() methods, and supports customizable test cases and configurations."
 type: software
 authors:

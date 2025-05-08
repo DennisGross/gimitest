@@ -1,5 +1,5 @@
 # Gimitest
-The _Gimitest_ enhances the [Farama Gymnasium](https://gymnasium.farama.org/index.html), [PettingZoo](https://pettingzoo.farama.org/content/basic_usage/), and similar frameworks by modifying its `reset(...)` and `step(...)` methods, thereby simplifying the testing process of Reinforcement Learning (RL) agents at specific time steps and episode terminations, whether in training or testing phases.
+The _Gimitest_ software enhances the [Farama Gymnasium](https://gymnasium.farama.org/index.html), [PettingZoo](https://pettingzoo.farama.org/content/basic_usage/), and similar frameworks by modifying its `reset(...)` and `step(...)` methods, thereby simplifying the testing process of Reinforcement Learning (RL) agents at specific time steps and episode terminations, whether in training or testing phases.
 
 A decorator design pattern is used to modify the functionality of an object at runtime.
 We use the decorator design pattern to extend the `reset(...)` and `step(...)` methods of the single-agent and multi-agent RL environments, allowing for testing at specific time intervals and episode terminations.
@@ -88,14 +88,16 @@ pip install -r requirements.txt
 
 
 
-## 📜 Citation 
+## 📜 Citation
 If you use Gimitest in your research, please cite the following:
 ```
-@misc{gimitest,
-  author = {Dennis Gross, Quentin Mazouni, Helge Spieker},
-  title = {{Gimitest: A tool for testing reinforcement learning agents}},
-  year = {2024},
-  note = {GitHub repository},
-  howpublished = {\url{https://github.com/DennisGross/gimitest}}
+@software{Gross_gimitest_2025,
+  author = {Gross, Dennis and Mazouni, Quentin and Spieker, Helge},
+  license = {MIT},
+  month = may,
+  title = {{Gimitest: A Comprehensive Tool for Testing Reinforcement Learning Policies}},
+  url = {https://github.com/DennisGross/gimitest},
+  version = {1.0},
+  year = {2025}
 }
 ```
